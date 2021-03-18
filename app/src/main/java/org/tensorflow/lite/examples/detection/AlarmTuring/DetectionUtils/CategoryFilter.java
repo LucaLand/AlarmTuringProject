@@ -1,10 +1,12 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils;
 
+import org.tensorflow.lite.examples.detection.tflite.Detector;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CategoryFilter implements Filter {
+public class CategoryFilter implements Filter<Detector.Recognition> {
     private List<String> listCategories;
     private String alias = "";
 
@@ -36,10 +38,19 @@ public class CategoryFilter implements Filter {
         return alias;
     }
 
+
     @Override
-    public boolean categoryCheck(String s) {
+    public boolean check(Detector.Recognition input) {
         for(String category : listCategories){
-            if(s.equals(category))
+            if(input.getTitle().equals(category))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean check(String input) {
+        for(String category : listCategories){
+            if(input.equals(category))
                 return true;
         }
         return false;

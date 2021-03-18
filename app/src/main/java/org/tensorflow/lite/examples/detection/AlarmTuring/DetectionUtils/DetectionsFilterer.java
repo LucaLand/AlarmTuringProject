@@ -10,13 +10,13 @@ public class DetectionsFilterer {
 
     static int id =0;
 
-    public static List<Detector.Recognition> FilterDetectionGeneral(List<Detector.Recognition> detectionList, List<CategoryFilter> filters){
+    public static List<Detector.Recognition> FilterDetectionGeneral(List<Detector.Recognition> detectionList, List<CategoryFilter> filters, ConfidenceFilter confFilter){
         List<Detector.Recognition> detections = new LinkedList<>();
         if(id>=500){id=0;}
 
         for(Detector.Recognition detection : detectionList){
             for(CategoryFilter f : filters){
-                if(f.categoryCheck(detection.getTitle()))
+                if(f.check(detection) && confFilter.check(detection))
                     detections.add(new Detector.Recognition(
                             ""+ id++,
                             f.getAlias(),
@@ -28,6 +28,7 @@ public class DetectionsFilterer {
         return detections;
     }
 
+    @Deprecated
     public static List<Detector.Recognition> FilterDetection(List<Detector.Recognition> l){
 
         List<Detector.Recognition> Detections = new LinkedList<>();
@@ -37,7 +38,7 @@ public class DetectionsFilterer {
         for (Detector.Recognition detection : l) {
 
             category = detection.getTitle();
-            if(new CategoryFilter("car,truck,bicycle,motorcycle").categoryCheck(category)) {
+            if(new CategoryFilter("car,truck,bicycle,motorcycle;").check(category)) {
                 Detections.add(
                         new Detector.Recognition(
                                 "" + id++,
@@ -45,14 +46,14 @@ public class DetectionsFilterer {
                                 detection.getConfidence(),
                                 detection.getLocation()));
             }
-            else if(new CategoryFilter("dog,cat,horse,bear,bird,cow").categoryCheck(category)){
+            else if(new CategoryFilter("dog,cat,horse,bear,bird,cow;").check(category)){
                 Detections.add(
                         new Detector.Recognition(
                                 "" + id++,
                                 DetectionCategoryType.ANIMAL.getCategory(),
                                 detection.getConfidence(),
                                 detection.getLocation()));
-            }else if(new CategoryFilter("person;", "Person").categoryCheck(category)){
+            }else if(new CategoryFilter("person;", "Person").check(category)){
                 Detections.add(
                         new Detector.Recognition(
                                 "" + id++,
@@ -90,7 +91,7 @@ public class DetectionsFilterer {
                                 "Animal",
                                 detection.getConfidence(),
                                 detection.getLocation()));
-            }else if(new CategoryFilter("person;").categoryCheck(category)){
+            }else if(new CategoryFilter("person;").check(category)){
                 Detections.add(
                         new Detector.Recognition(
                                 "" + id++,
