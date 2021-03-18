@@ -34,7 +34,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
+import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
+import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevel;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -182,8 +187,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             final long startTime = SystemClock.uptimeMillis();
             final List<Detector.Recognition> detections = detector.recognizeImage(croppedBitmap);
 
-            /**FILTERING THE CATEGORIES VISUALIZED*/
-            final List<Detector.Recognition> results = DetectionsFilterer.FilterDetection(detections);
+            /** Selecting the security Level
+             * TODO. a function that get the level from the UI (Stop the alamr, click on change to activate change, the + or - to change securityLevel*/
+            SecurityLevel secLv = SecurityLevel.INCASA;
+            SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
+            /** Our Function - Filter categories and sends results to the SecurityController*/
+            final List<Detector.Recognition> results = alarmTuring(detections, alarmTuring);
+
 
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
@@ -269,5 +279,24 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   @Override
   protected void setNumThreads(final int numThreads) {
     runInBackground(() -> detector.setNumThreads(numThreads));
+  }
+
+  private List<Detector.Recognition> alarmTuring (List<Detector.Recognition> detections, SecurityController alarm){
+
+    /**FILTERING THE CATEGORIES VISUALIZED
+     * TODO. Export this and other method (get things from UI) to another Class*/
+    //List<Detector.Recognition> results = DetectionsFilterer.FilterDetection(detections);
+
+    /** Initializing filters for the category to detect*/
+    List<CategoryFilter> categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
+
+    ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
+
+    /**Filtering all the detection by allowed Category and minimum confidence */
+    List<Detector.Recognition> results = DetectionsFilterer.FilterDetectionGeneral(detections, categoryFilterList, confFilter);
+
+    alarm.run(results);
+
+    return results;
   }
 }
