@@ -13,7 +13,7 @@ public enum SecurityLevel {
     HIGH(4,"Sicurezza:Alto Livello - Fuori casa",""), //IMPLEMENT desc e RELATION
     MEDIUM(3,"Sicurezza: media", ""), //IMPLEMENT desc e RELATION
 
-    INCASA(2,"Sicurezza: bassa - in casa", "", RelationFactory.createRelationList("Person,SOUND,8,1,true;")),
+    INCASA(2,"Sicurezza: bassa - in casa", "", RelationFactory.createRelationList("PERSON,SOUND,8,1,true;")),
     LOW(1, "Sicurezza bassa", "", Arrays.asList(new RelationCategoryToAlert(DetectionCategoryType.PERSON,AlertType.MSG)));
 
 
@@ -22,7 +22,13 @@ public enum SecurityLevel {
     private String descrizione = "";
     private List<RelationCategoryToAlert> rel;
 
-    SecurityLevel(int lv, String tipoLivello, String descrizione, List<RelationCategoryToAlert> rel) {
+    public static SecurityLevel createLevelsFromFile(){
+        /** TODO implement factory method createLevelsFromFile to import personalized SecurityLevels */
+        return null;
+    }
+
+
+    SecurityLevel(int lv, String tipoLivello, String desc, List<RelationCategoryToAlert> rel) {
         this.lv = lv;
         this.tipoLivello = tipoLivello;
         this.descrizione = descrizione;
