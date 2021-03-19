@@ -2,6 +2,8 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
+import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
@@ -71,10 +73,39 @@ public class FileSupport {
         return relationList;
     }
 
+
+    /**FILE Category:
+     * {"category":"ANIMAL", "classes":"dog,cat,horse,bear,bird,cow;"}.
+     * {"category":"PERSON", "classes":"person"}.
+     * {"category":"VEHICLE", "classes":"car,truck,bicycle,motorcycle;"}.*/
+
+    public static List<CategoryFilter> readCategoryFilters (String fileName) throws FileNotFoundException {
+        List<CategoryFilter> categoryFilters = new LinkedList<>();
+        String line;
+        JSONObject json;
+        CategoryFilter filter;
+
+        BufferedReader r = openFile(fileName);
+        try {
+            while ((line = r.readLine()) != null){
+                json = new JSONObject(line);
+                filter = CategoryFilterFactory.createCategroyFilterJson(json);
+                categoryFilters.add(filter);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return categoryFilters;
+    }
+
 }
 
 /**
  * Rel1: ANIMAL,MSG,10(s),2(minimum),true/false;\n
- * RelJson: {"category":"ANIMAL/PERSON/VEHICLE", "alertType":"SOUND/MAIL/", "time":5 (secondi), "minOcc":1/2..., "decreaseTime":true/false}\n
- * SecurityLevels: {"lv": 1, "name":"custom1", "rel":"ANIMAL,SOUND,8,2,false"}\n
+ * RelJson: {"category":"ANIMAL/PERSON/VEHICLE", "alertType":"SOUND/MAIL/", "time":5 (secondi), "minOcc":1/2..., "decreaseTime":true/false}.\n
+ * SecurityLevels: {"lv": 1, "name":"custom1", "rel":"ANIMAL,SOUND,8,2,false"}.\n
+ * CategoryFilter: {"category":"ANIMAL", "classes":"dog,cat,horse,bear,bird,cow;"}.\n
  * */

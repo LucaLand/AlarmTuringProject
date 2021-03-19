@@ -8,18 +8,12 @@ import java.util.Scanner;
 
 public class CategoryFilter implements Filter<Detector.Recognition> {
     private List<String> listCategories;
-    private String alias = "";
+    private final DetectionCategoryType alias;  //Animal / Person / Vehicle
 
 
-
-
-    public CategoryFilter(String categories) {
-        this.listCategories = createCategories(categories);
-    }
-
-    public CategoryFilter(String categories, String alias) {
-        this.listCategories = createCategories(categories);
-        this.alias = alias;
+    public CategoryFilter(String classes, DetectionCategoryType category) {
+        this.listCategories = createCategories(classes);
+        this.alias = category;
     }
 
     private List<String> createCategories(String categories){
@@ -34,9 +28,10 @@ public class CategoryFilter implements Filter<Detector.Recognition> {
         return categoriesList;
     }
 
-    public String getAlias() {
+    public DetectionCategoryType getCategory() {
         return alias;
     }
+    public String getAlias(){return alias.getCategory();}
 
 
     @Override
@@ -55,4 +50,12 @@ public class CategoryFilter implements Filter<Detector.Recognition> {
         }
         return false;
     }
+
+    @Deprecated
+    public CategoryFilter (String classes){
+        this.listCategories = createCategories(classes);
+        this.alias = null;
+    }
+
+
 }

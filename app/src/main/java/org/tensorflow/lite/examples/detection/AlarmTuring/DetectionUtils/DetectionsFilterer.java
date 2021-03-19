@@ -53,7 +53,7 @@ public class DetectionsFilterer {
                                 DetectionCategoryType.ANIMAL.getCategory(),
                                 detection.getConfidence(),
                                 detection.getLocation()));
-            }else if(new CategoryFilter("person;", "Person").check(category)){
+            }else if(new CategoryFilter("person;").check(category)){
                 Detections.add(
                         new Detector.Recognition(
                                 "" + id++,

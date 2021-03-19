@@ -11,8 +11,6 @@ public enum DetectionCategoryType {
         this.category = category;
     }
 
-
-
     public String getCategory() {
         return category;
     }
