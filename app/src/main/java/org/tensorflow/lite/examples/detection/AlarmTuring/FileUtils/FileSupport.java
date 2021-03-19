@@ -22,6 +22,9 @@ public class FileSupport {
     public static BufferedReader openFile(String fileName) throws FileNotFoundException {
         try(BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))) {
             return r;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new FileNotFoundException("File:" + fileName + " not found!");
         } catch (IOException e) {
             e.printStackTrace();
         }
