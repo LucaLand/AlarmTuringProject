@@ -26,10 +26,14 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,8 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevel;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelEnum;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -181,6 +186,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     runInBackground(
         new Runnable() {
+          @RequiresApi(api = Build.VERSION_CODES.O)
           @Override
           public void run() {
             LOGGER.i("Running detection on image " + currTimestamp);
@@ -189,7 +195,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             /** Selecting the security Level
              * TODO. a function that get the level from the UI (Stop the alamr, click on change to activate change, the + or - to change securityLevel*/
-            SecurityLevel secLv = SecurityLevel.INCASA;
+            SecurityLevel secLv = SecurityLevelEnum.INCASA;
             SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
             /** Our Function - Filter categories and sends results to the SecurityController*/
             final List<Detector.Recognition> results = alarmTuring(detections, alarmTuring);
@@ -281,6 +287,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     runInBackground(() -> detector.setNumThreads(numThreads));
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.O)
   private List<Detector.Recognition> alarmTuring (List<Detector.Recognition> detections, SecurityController alarm){
 
     /**FILTERING THE CATEGORIES VISUALIZED

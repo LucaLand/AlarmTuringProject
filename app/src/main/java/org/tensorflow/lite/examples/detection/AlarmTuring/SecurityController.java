@@ -11,6 +11,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelEnum;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
@@ -30,16 +31,15 @@ public class SecurityController {
     private final List<RelationCategoryToAlert> relationList;
 
 
-    public static SecurityController createSecurityController(SecurityLevelEnum securityLevel) {
+    public static SecurityController createSecurityController(SecurityLevel securityLevel) {
         return new SecurityController(securityLevel);
     }
 
-    public SecurityController(SecurityLevelEnum securityLevel) {
+    public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
-        if(timeStamp.get(10)!= null);
-            System.out.println("LUCA");
-        for(int i=0; i<timeStamp.size(); i++){
 
+        for(int i=0; i<timeStamp.size(); i++){
+            Logger.write("iteration");
         }
     }
 
