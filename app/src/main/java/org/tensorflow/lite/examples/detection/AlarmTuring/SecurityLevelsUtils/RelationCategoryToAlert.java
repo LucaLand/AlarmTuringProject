@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection.AlarmTuring;
+package org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils;
 
 import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
