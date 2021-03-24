@@ -22,12 +22,15 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecurityController {
 
+
     private final int RESET_TIMEOUT_SECONDS = 5;
-    List<LocalDateTime> timeStamp = new ArrayList<>(50);
-    List<LocalDateTime> timeStampDecreasing = new ArrayList<>(50);
-    float detectionLevel[] = {0};
+    private boolean activated = true;
+    //TODO. Trasform engaged in a List, same size of the RelationList
+    private boolean enagaged[] = {false,false,false};
 
-
+    List<LocalDateTime> timeStamp = new ArrayList<>();
+    List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
+    List<Float> detectionLevel = new ArrayList<>();
 
     private final List<RelationCategoryToAlert> relationList;
 
@@ -38,59 +41,73 @@ public class SecurityController {
 
     public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
+        for(int i=0;i<relationList.size()+1;i++){
+            detectionLevel.add(i,0f);
+            timeStamp.add(i,LocalDateTime.now());
+            timeStampDecreasing.add(i,LocalDateTime.now());
+        }
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void run(List<Detector.Recognition> detectionList){
-        /** La check deve fare tutto;
-         *
-         */
-        int numRel=0;
+        if(!activated)
+            return;
+
+        int numRel=1;
         for(RelationCategoryToAlert relation : relationList){
             checker(detectionList, relation, numRel);
             numRel++;
         }
-        Logger.write("|| DetectionLevel: " + detectionLevel[0]); //use: getMaxDetectionLevel()
+        Logger.write("|| DetectionLevel: " + getLv(0)); //use: getMaxDetectionLevel()
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private synchronized void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int nRel){
+    private synchronized void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int numRel){
+
         /** Creating the alert that handles the specific Alerting detection*/
-        Alert alertType = AlertFactory.createAlert(rel.getAlertType());
-
-        int num = 0, minOccurrences = rel.getMinObjectNumber();
+        Alert thisAlert = AlertFactory.createAlert(rel.getAlertType());
         int alertTime = rel.getTimeSeconds();
-        boolean decreaseTime = rel.isDECREASE_TIME_BY_NUMBER();
-        DetectionCategoryType category = rel.getDetectionCategory();
+        boolean increaseLevelMultyple = rel.isDECREASE_TIME_BY_NUMBER();
+
         boolean isDetected = false;
+        int num;
 
-        for(Detector.Recognition detection : detectionList) {
-            isDetected = false;
-            if(checkCategory(detection, category)){
-                num++;
-                if(minOccurencesCheck(num, minOccurrences)){
-                    isDetected = true;
-                    detectionLevelIncrease(nRel, decreaseTime, num);
-                }
-                //DEBUG
-                Logger.writeDebug("NumRel: "+nRel+"|| Cateory: " + category.getCategory() + "|| Num: "+num +" min: "+minOccurrences+"|| IsDetected: "+isDetected + "||");
-
-            }
+        if((num = checkDetection(detectionList, rel)) != -1) {
+            detectionLevelIncrease(numRel, increaseLevelMultyple, num);
+            isDetected = true;
         }
 
-        if(checkDetectionLevelofRelation(nRel, alertTime))
-            alertType.alert();
+        if(checkDetectionLevelRelation(numRel, alertTime)) {
+            enagaged[numRel] = true;
+            thisAlert.alert();
+        }
 
-        if(detectionLevel[nRel]!=0 && !isDetected){
+        if(getLv(numRel)!=0 && !isDetected){
             Logger.write("ENTERED");
-            detectionLevelDecrease(nRel);
+            detectionLevelDecrease(numRel);
         }
+        //DEBUG
+        Logger.writeDebug("NumRel: "+numRel+"|| Cateory: " + rel.getDetectionCategory().getCategory() + "|| Num: "+num +" min: "+rel.getMinObjectNumber()+"|| IsDetected: "+isDetected + "||");
 
     }
 
 
+    private int checkDetection(List<Detector.Recognition> detectionList ,RelationCategoryToAlert rel){
+        int num = 0, minOccurrences = rel.getMinObjectNumber();
+        DetectionCategoryType category = rel.getDetectionCategory();
+
+        for(Detector.Recognition detection : detectionList) {
+            if(checkCategory(detection, category)){
+                num++;
+                if(minOccurencesCheck(num, minOccurrences)){
+                    return num;
+                }
+            }
+        }
+        return -1;
+    }
 
     private boolean checkCategory(Detector.Recognition detection, DetectionCategoryType categoryType ){
         return CategoryFilterFactory.createSimpleFilter(categoryType).check(detection);
@@ -114,21 +131,21 @@ public class SecurityController {
         int diff;
         timeStampDecreasing.add(numRel,now);
 
-        if(detectionLevel[numRel] == 0){
+        if(getLv(numRel) == 0){
             timeStamp.add(numRel, now);
             if(!decreaseTime)
-                detectionLevel[numRel]++;
+                lvAdd(numRel, 1);
             else
-                detectionLevel[numRel] += numOcc;
+                lvAdd(numRel, numOcc);
             //Debug
             Logger.writeDebug("DIFF: "+ 0 +" || TIMEScorsa: "+ now.toString() + " || TIMENow: " + now.toString());
         }else {
             detectionTime = timeStamp.get(numRel);
             if ((diff = compareDate(detectionTime, now)) >= 1) {
                 if (!decreaseTime)
-                    detectionLevel[numRel]++;
+                    lvAdd(numRel, 1);
                 else
-                    detectionLevel[numRel] += numOcc;
+                    lvAdd(numRel, numOcc);
                 timeStamp.add(numRel, now);
             }
             //Debug
@@ -150,12 +167,12 @@ public class SecurityController {
         diff = compareDate(timeDiff, now);
 
         if(diffFromLast > RESET_TIMEOUT_SECONDS) {
-            detectionLevel[numRel] = 0;
+            lvSet(numRel, 0);
             //Debug
             Logger.writeDebug("detectionLevelDecrease - DIFF: "+diffFromLast+" || TIMEScorsa: "+ lastDetectionTime.toString() + " || TIMENow: " + now.toString());
             return;
         }else if(diff >= 1) {
-            detectionLevel[numRel] += -0.4;
+            lvAdd(numRel, -0.4f);
             timeStampDecreasing.add(numRel, now);
             //Debug
             Logger.writeDebug("detectionLevelDecrease - DIFF: "+diff+" || TIMEScorsa: "+ timeDiff.toString() + " || TIMENow: " + now.toString());
@@ -164,12 +181,12 @@ public class SecurityController {
     }
 
 
-    private boolean checkDetectionLevelofRelation(int numRel, int alertDetectionLevel){
-        if(detectionLevel[numRel]<0) {
-            detectionLevel[numRel] = 0;
+    private boolean checkDetectionLevelRelation(int numRel, int alertDetectionLevel){
+        if(getLv(numRel)<0) {
+            lvSet(numRel, 0);
             return false;
         }
-        if(detectionLevel[numRel] >= alertDetectionLevel)
+        if(getLv(numRel) >= alertDetectionLevel)
             return true;
 
         return false;
@@ -177,8 +194,8 @@ public class SecurityController {
 
     public float getMaxDetectionLevel(){
         float max = 0;
-        for(float i : detectionLevel){
-            if(i>max)
+        for(Float i : detectionLevel){
+            if(i.floatValue() > max)
                 max = i;
         }
         return max;
@@ -208,4 +225,26 @@ public class SecurityController {
         return (int)seconds;
 
     }
+
+    private void lvAdd(int numRel, float value){
+        detectionLevel.set(numRel, (getLv(numRel)+value));
+    }
+
+    private void lvSet(int numRel, float value){
+        detectionLevel.set(numRel, value);
+    }
+
+    private float getLv(int numRel){
+        return detectionLevel.get(numRel);
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
+
 }
