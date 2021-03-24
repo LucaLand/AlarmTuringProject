@@ -12,10 +12,10 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelEnum;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +24,7 @@ public class SecurityController {
 
     private final int RESET_TIMEOUT_SECONDS = 5;
     List<LocalDateTime> timeStamp = new ArrayList<>(50);
+    List<LocalDateTime> timeStampDecreasing = new ArrayList<>(50);
     float detectionLevel[] = {0};
 
 
@@ -37,10 +38,6 @@ public class SecurityController {
 
     public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
-
-        for(int i=0; i<timeStamp.size(); i++){
-            Logger.write("iteration");
-        }
     }
 
 
@@ -54,38 +51,42 @@ public class SecurityController {
             checker(detectionList, relation, numRel);
             numRel++;
         }
-        Logger.write("detectionLevel" + getMaxDetectionLevel());
+        Logger.write("|| DetectionLevel: " + detectionLevel[0]); //use: getMaxDetectionLevel()
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int nRel){
+    private synchronized void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int nRel){
         /** Creating the alert that handles the specific Alerting detection*/
         Alert alertType = AlertFactory.createAlert(rel.getAlertType());
 
         int num = 0, minOccurrences = rel.getMinObjectNumber();
-        int time = rel.getTimeSeconds();
+        int alertTime = rel.getTimeSeconds();
         boolean decreaseTime = rel.isDECREASE_TIME_BY_NUMBER();
-
+        DetectionCategoryType category = rel.getDetectionCategory();
         boolean isDetected = false;
 
         for(Detector.Recognition detection : detectionList) {
             isDetected = false;
-            if(checkCategory(detection, rel.getDetectionCategory())){
+            if(checkCategory(detection, category)){
                 num++;
                 if(minOccurencesCheck(num, minOccurrences)){
                     isDetected = true;
-                    if(detectionTimeCheck(nRel,time, decreaseTime, num))
-                        alertType.alert();
+                    detectionLevelIncrease(nRel, decreaseTime, num);
                 }
+                //DEBUG
+                Logger.writeDebug("NumRel: "+nRel+"|| Cateory: " + category.getCategory() + "|| Num: "+num +" min: "+minOccurrences+"|| IsDetected: "+isDetected + "||");
+
             }
-
         }
 
-        if(!isDetected){
-            timerCheck(nRel,time);
-        }
+        if(checkDetectionLevelofRelation(nRel, alertTime))
+            alertType.alert();
 
+        if(detectionLevel[nRel]!=0 && !isDetected){
+            Logger.write("ENTERED");
+            detectionLevelDecrease(nRel);
+        }
 
     }
 
@@ -107,56 +108,71 @@ public class SecurityController {
      * i secondi di detection dell'elemento, ogni secondo nel quale avviene almeno una detection, e questo si azzeri
      * in caso passi un tempo standard (COSTANT) tipo 10s*/
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private boolean detectionTimeCheck(int numRel, int time, boolean decreaseTime, int numOcc){
+    private synchronized void detectionLevelIncrease(int numRel, boolean decreaseTime, int numOcc){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime detectionTime;
+        int diff;
+        timeStampDecreasing.add(numRel,now);
 
         if(detectionLevel[numRel] == 0){
-            detectionTime = LocalDateTime.now();
-            timeStamp.set(numRel, detectionTime);
+            timeStamp.add(numRel, now);
             if(!decreaseTime)
                 detectionLevel[numRel]++;
             else
                 detectionLevel[numRel] += numOcc;
-
-            return false;
-        }else
+            //Debug
+            Logger.writeDebug("DIFF: "+ 0 +" || TIMEScorsa: "+ now.toString() + " || TIMENow: " + now.toString());
+        }else {
             detectionTime = timeStamp.get(numRel);
-
-
-        int diff = detectionTime.compareTo(now);
-
-        if(diff > 1) {
-            if(!decreaseTime)
-                detectionLevel[numRel]++;
-            else
-                detectionLevel[numRel] += numOcc;
-
-            timeStamp.set(numRel, now);
+            if ((diff = compareDate(detectionTime, now)) >= 1) {
+                if (!decreaseTime)
+                    detectionLevel[numRel]++;
+                else
+                    detectionLevel[numRel] += numOcc;
+                timeStamp.add(numRel, now);
+            }
+            //Debug
+            Logger.writeDebug("DIFF: "+diff+" || TIMEScorsa: "+ detectionTime.toString() + " || TIMENow: " + now.toString());
         }
 
-        if(detectionLevel[numRel] >= time)
-            return true;
 
-        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void timerCheck(int numRel, int time) {
-        LocalDateTime startTime;
+    private synchronized void detectionLevelDecrease(int numRel) {
+        LocalDateTime lastDetectionTime, timeDiff;
         LocalDateTime now = LocalDateTime.now();
+        int diff, diffFromLast;
 
-        if(detectionLevel[numRel] == 0)
+        lastDetectionTime = timeStamp.get(numRel);
+        diffFromLast = compareDate(lastDetectionTime, now);
+        timeDiff = timeStampDecreasing.get(numRel);
+        diff = compareDate(timeDiff, now);
+
+        if(diffFromLast > RESET_TIMEOUT_SECONDS) {
+            detectionLevel[numRel] = 0;
+            //Debug
+            Logger.writeDebug("detectionLevelDecrease - DIFF: "+diffFromLast+" || TIMEScorsa: "+ lastDetectionTime.toString() + " || TIMENow: " + now.toString());
             return;
-        else{
-            startTime = timeStamp.get(numRel);
-            int diff = startTime.compareTo(now);
-
-            if(diff > RESET_TIMEOUT_SECONDS)
-                detectionLevel[numRel] = 0;
-            else if(diff > 1)
-                detectionLevel[numRel] += -0.4;
+        }else if(diff >= 1) {
+            detectionLevel[numRel] += -0.4;
+            timeStampDecreasing.add(numRel, now);
+            //Debug
+            Logger.writeDebug("detectionLevelDecrease - DIFF: "+diff+" || TIMEScorsa: "+ timeDiff.toString() + " || TIMENow: " + now.toString());
         }
+
+    }
+
+
+    private boolean checkDetectionLevelofRelation(int numRel, int alertDetectionLevel){
+        if(detectionLevel[numRel]<0) {
+            detectionLevel[numRel] = 0;
+            return false;
+        }
+        if(detectionLevel[numRel] >= alertDetectionLevel)
+            return true;
+
+        return false;
     }
 
     public float getMaxDetectionLevel(){
@@ -166,5 +182,30 @@ public class SecurityController {
                 max = i;
         }
         return max;
+    }
+
+    private int compareDate(LocalDateTime timeFrom, LocalDateTime timeTo){
+
+        LocalDateTime tempDateTime = LocalDateTime.from( timeFrom );
+
+        long years = tempDateTime.until( timeTo, ChronoUnit.YEARS );
+        tempDateTime = tempDateTime.plusYears( years );
+
+        long months = tempDateTime.until( timeTo, ChronoUnit.MONTHS );
+        tempDateTime = tempDateTime.plusMonths( months );
+
+        long days = tempDateTime.until( timeTo, ChronoUnit.DAYS );
+        tempDateTime = tempDateTime.plusDays( days );
+
+        long hours = tempDateTime.until( timeTo, ChronoUnit.HOURS );
+        tempDateTime = tempDateTime.plusHours( hours );
+
+        long minutes = tempDateTime.until( timeTo, ChronoUnit.MINUTES );
+        tempDateTime = tempDateTime.plusMinutes( minutes );
+
+        long seconds = tempDateTime.until( timeTo, ChronoUnit.SECONDS );
+
+        return (int)seconds;
+
     }
 }
