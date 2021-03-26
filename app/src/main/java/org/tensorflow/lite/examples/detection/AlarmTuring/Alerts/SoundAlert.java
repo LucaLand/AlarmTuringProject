@@ -2,13 +2,25 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 
-public class SoundAlert implements Alert {
+public class SoundAlert extends Alert {
 
     /** IMPLEMENTING CLASS */
 
+
+    /**
+     * This function will be execute by a dedicated Thread
+     * Remember to use Thread.sleep() decrease the execution Frequency
+     */
     @Override
-    public void alert() {
-        Logger.write("------SOUND------");
+    public void alarmAlert() {
+        while(isEngaged()) {
+            Logger.write("------SOUND------");
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

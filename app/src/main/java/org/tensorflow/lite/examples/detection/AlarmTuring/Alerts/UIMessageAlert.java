@@ -1,12 +1,19 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
-public class UIMessageAlert implements Alert{
+import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
+
+public class UIMessageAlert extends Alert{
 
     /** IMPLEMENTING CLASS */
 
+
+    /**
+     * This function will be execute by a dedicated Thread
+     * Remember to use Thread.sleep() decrease the execution Frequency
+     */
     @Override
-    public void alert() {
-        System.out.println("MSG");
+    public void alarmAlert() {
+        Logger.write("MSG");
     }
 
 }

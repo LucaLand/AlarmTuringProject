@@ -2,6 +2,9 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 
+
+// TODO. Si protrebbe usare la put sull'HANDLER come fatto in camera activity, probabilmente è preferibile
+
 public abstract class Alert extends Thread{
 
     private boolean engaged = false;
