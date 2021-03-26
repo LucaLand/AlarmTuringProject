@@ -2,8 +2,11 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils;
 
 import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.FileSupport;
 import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.Filename;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,16 +14,19 @@ import java.util.List;
 public class SecurityLevelFactory {
 
     public static List<SecurityLevel> createSecurityLevelList(){
-        List<SecurityLevel> levelsList = new LinkedList<>();
+        List<SecurityLevel> levelsList = new ArrayList<>();
+        SecurityLevel[] levels = SecurityLevelEnum.values();
 
         for(SecurityLevel level: SecurityLevelEnum.values()){
-            levelsList.add(level);
+            levels[level.getLevel()-1] = level;
         }
+
+        levelsList.addAll(Arrays.asList(levels));
 
         try{
             levelsList.addAll(importLevelsFromFile());
         } catch (FileNotFoundException e) {
-            System.out.println("["+ SecurityLevelFactory.class + "]:\t" + e.getMessage());
+            Logger.writeDebug("["+ SecurityLevelFactory.class + "]:\t" + e.getMessage());
         }
 
         return levelsList;
