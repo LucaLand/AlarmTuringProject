@@ -25,8 +25,6 @@ public class SecurityController {
 
     private final int RESET_TIMEOUT_SECONDS = 5;
     private boolean activated = true;
-    //TODO. Trasform engaged in a List, same size of the RelationList
-    private boolean enagaged[] = {false,false,false};
 
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
@@ -50,7 +48,7 @@ public class SecurityController {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void run(List<Detector.Recognition> detectionList){
+    public synchronized void run(List<Detector.Recognition> detectionList){
         if(!activated)
             return;
 
@@ -66,7 +64,7 @@ public class SecurityController {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private synchronized void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int numRel){
 
-        /** Creating the alert that handles the specific Alerting detection*/
+        /* Creating the alert that handles the specific Alerting detection */
         Alert thisAlert = AlertFactory.createAlert(rel.getAlertType());
         int alertTime = rel.getTimeSeconds();
         boolean increaseLevelMultyple = rel.isDECREASE_TIME_BY_NUMBER();
@@ -80,7 +78,6 @@ public class SecurityController {
         }
 
         if(checkDetectionLevelRelation(numRel, alertTime)) {
-            enagaged[numRel] = true;
             thisAlert.alert();
         }
 
@@ -101,7 +98,7 @@ public class SecurityController {
         for(Detector.Recognition detection : detectionList) {
             if(checkCategory(detection, category)){
                 num++;
-                if(minOccurencesCheck(num, minOccurrences)){
+                if(minOccurrencesCheck(num, minOccurrences)){
                     return num;
                 }
             }
@@ -113,10 +110,8 @@ public class SecurityController {
         return CategoryFilterFactory.createSimpleFilter(categoryType).check(detection);
     }
 
-    private boolean minOccurencesCheck(int occ, int minOcc){
-        if(occ >= minOcc)
-            return true;
-        return false;
+    private boolean minOccurrencesCheck(int occ, int minOcc){
+        return occ >= minOcc;
     }
 
 
@@ -186,6 +181,7 @@ public class SecurityController {
             lvSet(numRel, 0);
             return false;
         }
+
         if(getLv(numRel) >= alertDetectionLevel)
             return true;
 
@@ -195,7 +191,7 @@ public class SecurityController {
     public float getMaxDetectionLevel(){
         float max = 0;
         for(Float i : detectionLevel){
-            if(i.floatValue() > max)
+            if(i > max)
                 max = i;
         }
         return max;
@@ -246,5 +242,8 @@ public class SecurityController {
         this.activated = activated;
     }
 
+    public void powerButton() {
+        setActivated(!activated);
+    }
 
 }
