@@ -38,10 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
-import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
-import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
-import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelEnum;
@@ -59,7 +55,7 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
  * objects.
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
+public abstract class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
@@ -68,8 +64,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
-  // Minimum detection confidence to track a detection.
-  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
   private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -95,8 +90,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
-  SecurityLevel secLv = SecurityLevelEnum.INCASA;
-  SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
+
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -203,7 +197,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             //SecurityLevel secLv = SecurityLevelEnum.INCASA;
             //SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
             /** Our Function - Filter categories and sends results to the SecurityController*/
-            final List<Detector.Recognition> results = alarmTuring(detections, alarmTuring);
+            final List<Detector.Recognition> results = alarmTuringMainFunc(detections);
 
 
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
@@ -215,19 +209,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             paint.setStyle(Style.STROKE);
             paint.setStrokeWidth(2.0f);
 
-            float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-            switch (MODE) {
-              case TF_OD_API:
-                minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-                break;
-            }
 
             final List<Detector.Recognition> mappedRecognitions =
-                new ArrayList<Detector.Recognition>();
+                new ArrayList<>();
 
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= minimumConfidence) {
+              if (location != null) {
                 canvas.drawRect(location, paint);
 
                 cropToFrameTransform.mapRect(location);
@@ -287,28 +275,5 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         });
   }
 
-  @Override
-  protected void setNumThreads(final int numThreads) {
-    runInBackground(() -> detector.setNumThreads(numThreads));
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  private List<Detector.Recognition> alarmTuring (List<Detector.Recognition> detections, SecurityController alarm){
-
-    /**FILTERING THE CATEGORIES VISUALIZED
-     * TODO. Export this and other method (get things from UI) to another Class*/
-    //List<Detector.Recognition> results = DetectionsFilterer.FilterDetection(detections);
-
-    /** Initializing filters for the category to detect*/
-    List<CategoryFilter> categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
-
-    ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
-
-    /**Filtering all the detection by allowed Category and minimum confidence */
-    List<Detector.Recognition> results = DetectionsFilterer.FilterRecognition(detections, categoryFilterList, confFilter);
-
-    alarm.run(results);
-
-    return results;
-  }
+   protected abstract List<Detector.Recognition> alarmTuringMainFunc(List<Detector.Recognition> detections);
 }
