@@ -15,18 +15,29 @@
 -->
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black"
         android:orientation="vertical">
 
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonOnOffAlarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="320dp"
+            android:layout_marginTop="620dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_lock_power_off" />
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -35,18 +46,65 @@
             android:layout_height="match_parent"
             tools:context="org.tensorflow.demo.CameraActivity" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentTop="true"
-            android:background="@color/tfe_semi_transparent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/tfe_semi_transparent"
+                app:logo="@drawable/caret"
+                app:subtitle="made with"
+                app:subtitleTextColor="#9A9A9A"
+                app:title="TuringAlarm"
+                app:titleMargin="8px"
+                app:titleTextColor="#FFFFFF">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:rotationX="0"
+                    android:src="@drawable/tfl2_logo"
+                    android:translationX="-30dp"
+                    android:translationY="15dp" />
+            </androidx.appcompat.widget.Toolbar>
+
+            <TextView
+                android:id="@+id/labelAlarm"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/tfl2_logo" />
-        </androidx.appcompat.widget.Toolbar>
+                android:layout_marginTop="25dp"
+                android:text="ALARM"
+                android:textAlignment="center"
+                android:textColor="#FF0000"
+                android:textIsSelectable="false"
+                android:textSize="36sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
+                android:id="@+id/TextAlertMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAlignment="center"
+                android:textColor="#FF8282"
+                android:textIsSelectable="false"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                tools:text="@tools:sample/date/mmddyy" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
