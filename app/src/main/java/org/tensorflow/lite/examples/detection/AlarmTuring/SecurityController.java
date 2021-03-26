@@ -12,6 +12,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.time.LocalDateTime;
@@ -22,20 +23,15 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecurityController {
 
-
     private final int RESET_TIMEOUT_SECONDS = 5;
-    private boolean activated = true;
+    private boolean activated = false;
+
 
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
     List<Float> detectionLevel = new ArrayList<>();
 
     private final List<RelationCategoryToAlert> relationList;
-
-
-    public static SecurityController createSecurityController(SecurityLevel securityLevel) {
-        return new SecurityController(securityLevel);
-    }
 
     public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
