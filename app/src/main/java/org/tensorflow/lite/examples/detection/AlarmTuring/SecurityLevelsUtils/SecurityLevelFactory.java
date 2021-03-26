@@ -10,26 +10,6 @@ import java.util.List;
 @Filename(fileName = "SecurityLevels.txt")
 public class SecurityLevelFactory {
 
-    public static SecurityLevel createSecurityLevel(int lv, String name, String relations){
-        return new SecurityLevelCustom(lv, name, RelationFactory.createRelationList(relations));
-    }
-
-
-
-    private static List<SecurityLevel> importLevelsFromFile() throws FileNotFoundException {
-        String fileName = SecurityLevelFactory.class.getAnnotation(Filename.class).fileName();
-        List<SecurityLevel> levelList = new LinkedList<>();
-
-        try{
-            levelList = FileSupport.readSecurityLevels(fileName);
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("File:" + fileName + " not found");
-        }
-
-
-        return levelList;
-    }
-
     public static List<SecurityLevel> createSecurityLevelList(){
         List<SecurityLevel> levelsList = new LinkedList<>();
 
@@ -45,5 +25,29 @@ public class SecurityLevelFactory {
 
         return levelsList;
     }
+
+    private static List<SecurityLevel> importLevelsFromFile() throws FileNotFoundException {
+        String fileName = SecurityLevelFactory.class.getAnnotation(Filename.class).fileName();
+        List<SecurityLevel> levelList = new LinkedList<>();
+
+        try{
+            levelList = FileSupport.readSecurityLevels(fileName);
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("File:" + fileName + " not found");
+        }
+
+
+        return levelList;
+    }
+
+    public static SecurityLevel createSecurityLevel(int lv, String name, String relations){
+        return new SecurityLevelCustom(lv, name, RelationFactory.createRelationList(relations));
+    }
+
+
+
+
+
+
 
 }

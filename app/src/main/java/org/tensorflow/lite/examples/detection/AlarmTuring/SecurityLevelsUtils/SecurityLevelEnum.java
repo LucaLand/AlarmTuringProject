@@ -25,12 +25,23 @@ public enum SecurityLevelEnum implements SecurityLevel {
     private List<RelationCategoryToAlert> rel;
 
     /**     CONSTRUCTOR      */
+    /*SecurityLevelEnum(int lv, String tipoLivello, String rel, String desc) {
+        this.lv = lv;
+        this.nomeLivello = tipoLivello;
+        this.descrizione = desc;
+        this.rel = RelationFactory.createRelationList(rel);
+    }
+     */
+
     SecurityLevelEnum(int lv, String tipoLivello, List<RelationCategoryToAlert> rel, String desc) {
         this.lv = lv;
         this.nomeLivello = tipoLivello;
         this.descrizione = desc;
         this.rel = rel;
     }
+
+
+
     SecurityLevelEnum(int lv, String tipoLivello, List<RelationCategoryToAlert> rel) {
         this.lv = lv;
         this.nomeLivello = tipoLivello;
@@ -58,6 +69,7 @@ public enum SecurityLevelEnum implements SecurityLevel {
 
 
     /**         DEPRECATI           */
+    /*
     @Deprecated
     private String alertTypes = AlertType.MSG.getType();
     @Deprecated
@@ -71,6 +83,7 @@ public enum SecurityLevelEnum implements SecurityLevel {
         this.detectingCategory = categories;
 
     }
+
     @Deprecated
     SecurityLevelEnum(int lv, String tipoLivello, String desc, String alertTypes) {
         this.lv = lv;
@@ -78,6 +91,7 @@ public enum SecurityLevelEnum implements SecurityLevel {
         this.descrizione = desc;
         this.alertTypes = alertTypes;
     }
+     */
 
 
 

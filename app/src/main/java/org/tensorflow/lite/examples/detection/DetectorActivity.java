@@ -58,6 +58,7 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
   private static final Logger LOGGER = new Logger();
 
@@ -93,6 +94,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private MultiBoxTracker tracker;
 
   private BorderedText borderedText;
+
+  SecurityLevel secLv = SecurityLevelEnum.INCASA;
+  SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -193,10 +197,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             final long startTime = SystemClock.uptimeMillis();
             final List<Detector.Recognition> detections = detector.recognizeImage(croppedBitmap);
 
+
             /** Selecting the security Level
              * TODO. a function that get the level from the UI (Stop the alamr, click on change to activate change, the + or - to change securityLevel*/
-            SecurityLevel secLv = SecurityLevelEnum.INCASA;
-            SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
+            //SecurityLevel secLv = SecurityLevelEnum.INCASA;
+            //SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
             /** Our Function - Filter categories and sends results to the SecurityController*/
             final List<Detector.Recognition> results = alarmTuring(detections, alarmTuring);
 
@@ -300,7 +305,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
 
     /**Filtering all the detection by allowed Category and minimum confidence */
-    List<Detector.Recognition> results = DetectionsFilterer.FilterDetectionGeneral(detections, categoryFilterList, confFilter);
+    List<Detector.Recognition> results = DetectionsFilterer.FilterRecognition(detections, categoryFilterList, confFilter);
 
     alarm.run(results);
 

@@ -43,6 +43,12 @@ public class CategoryFilter implements Filter<Detector.Recognition> {
         return false;
     }
 
+
+
+
+
+
+
     public boolean check(String input) {
         for(String category : listCategories){
             if(input.equals(category))
@@ -50,6 +56,8 @@ public class CategoryFilter implements Filter<Detector.Recognition> {
         }
         return false;
     }
+
+
 
     @Deprecated
     public CategoryFilter (String classes){

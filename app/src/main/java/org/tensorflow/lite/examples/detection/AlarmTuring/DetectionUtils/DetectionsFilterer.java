@@ -10,7 +10,8 @@ public class DetectionsFilterer {
 
     static int id =0;
 
-    public static List<Detector.Recognition> FilterDetectionGeneral(List<Detector.Recognition> detectionList, List<CategoryFilter> filters, ConfidenceFilter confFilter){
+
+    public static List<Detector.Recognition> FilterRecognition (List<Detector.Recognition> detectionList, List<CategoryFilter> filters, ConfidenceFilter confFilter){
         List<Detector.Recognition> detections = new LinkedList<>();
         if(id>=500){id=0;}
 
@@ -28,6 +29,20 @@ public class DetectionsFilterer {
         return detections;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    /************************************************
+     * DEPRECATED
+     * ***********************************************/
     @Deprecated
     public static List<Detector.Recognition> FilterDetection(List<Detector.Recognition> l){
 

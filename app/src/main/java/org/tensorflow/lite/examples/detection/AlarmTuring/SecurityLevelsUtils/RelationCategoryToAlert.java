@@ -4,6 +4,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 
 public class RelationCategoryToAlert {
+
     private final DetectionCategoryType detectionCategory;
     private final AlertType alertType;
     private int TimeSeconds = 5;
@@ -17,19 +18,6 @@ public class RelationCategoryToAlert {
         TimeSeconds = timeSeconds;
         this.minObjectNumber = minObjectNumber;
         this.DECREASE_TIME_BY_NUMBER = DECREASE_TIME_BY_NUMBER;
-    }
-
-    public RelationCategoryToAlert(DetectionCategoryType detectionCategory, AlertType alertType, int timeSeconds, int minObjectNumber) {
-        this.detectionCategory = detectionCategory;
-        this.alertType = alertType;
-        TimeSeconds = timeSeconds;
-        this.minObjectNumber = minObjectNumber;
-    }
-
-    public RelationCategoryToAlert(DetectionCategoryType detectionCategory, AlertType alertType, int timeSeconds) {
-        this.detectionCategory = detectionCategory;
-        this.alertType = alertType;
-        TimeSeconds = timeSeconds;
     }
 
     public RelationCategoryToAlert(DetectionCategoryType detectionCategory, AlertType alertType) {

@@ -2,6 +2,8 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 public enum AlertType {
     MSG("MSG"), MAIL("MAIL"), SOUND("SOUND"), BOT("BOT");
+
+
     private String type;
 
     AlertType(String type) {
