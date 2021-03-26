@@ -30,15 +30,18 @@ public class SecurityController {
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
     List<Float> detectionLevel = new ArrayList<>();
+    List<Alert> alertsList = new ArrayList<>();
 
     private final List<RelationCategoryToAlert> relationList;
 
     public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
-        for(int i=0;i<relationList.size()+1;i++){
+        for(int i=0;i<relationList.size();i++){
             detectionLevel.add(i,0f);
             timeStamp.add(i,LocalDateTime.now());
             timeStampDecreasing.add(i,LocalDateTime.now());
+            /* Creating the alert that handles the specific Alerting detection */
+            alertsList.add(AlertFactory.createAlert(relationList.get(i).getAlertType()));
         }
     }
 
@@ -48,7 +51,7 @@ public class SecurityController {
         if(!activated)
             return;
 
-        int numRel=1;
+        int numRel=0;
         for(RelationCategoryToAlert relation : relationList){
             checker(detectionList, relation, numRel);
             numRel++;
@@ -60,8 +63,7 @@ public class SecurityController {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private synchronized void checker(List<Detector.Recognition> detectionList, RelationCategoryToAlert rel, int numRel){
 
-        /* Creating the alert that handles the specific Alerting detection */
-        Alert thisAlert = AlertFactory.createAlert(rel.getAlertType());
+
         int alertTime = rel.getTimeSeconds();
         boolean increaseLevelMultyple = rel.isDECREASE_TIME_BY_NUMBER();
 
@@ -74,7 +76,7 @@ public class SecurityController {
         }
 
         if(checkDetectionLevelRelation(numRel, alertTime)) {
-            thisAlert.alert();
+            alertsList.get(numRel).alert();
         }
 
         if(getLv(numRel)!=0 && !isDetected){
@@ -240,6 +242,21 @@ public class SecurityController {
 
     public void powerButton() {
         setActivated(!activated);
+        if(!activated){
+            reset();
+        }
+    }
+
+    public void resetAlerts(){
+        for(Alert alert : alertsList) alert.reset();
+    }
+
+    private void reset(){
+        for(int i=0;i<relationList.size();i++){
+            detectionLevel.add(i,0f);
+            timeStamp.add(i,LocalDateTime.now());
+            timeStampDecreasing.add(i,LocalDateTime.now());
+        }
     }
 
 }
