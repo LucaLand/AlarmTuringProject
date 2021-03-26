@@ -8,10 +8,13 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityControllerFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
@@ -37,7 +40,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     //UI References
     private ImageView plusImageView, minusImageView;
     private TextView TextViewLevelNum, levelNameTextView;
-
+    private FloatingActionButton onOffButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +53,12 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         levelNameTextView = findViewById(R.id.textLevel_Name);
         plusImageView = findViewById(R.id.plus);
         minusImageView = findViewById(R.id.minus);
+        onOffButton = findViewById(R.id.buttonOnOffAlarm);
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
+        onOffButton.setOnClickListener(this);
     }
 
     @Override
@@ -94,14 +99,14 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void handleClickPlusButton(){
-        if (secLevel >= 9) return;
+        if (secLevel >= securityLevelList.size()) return;
         secLevel++;
         TextViewLevelNum.setText(String.valueOf(secLevel));
         changeSecurityLevel(secLevel);
     }
 
     private void handleClickMinusButton(){
-        if (secLevel == 1) {
+        if (secLevel == 0) {
             return;
         }
         secLevel--;
@@ -110,15 +115,16 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void changeSecurityLevel(int level){
-        boolean enbaled = securityController.isActivated();
-        securityController = SecurityControllerFactory.createSecurityController(level, enbaled);
+        boolean enabled = securityController.isActivated();
+        securityController = SecurityControllerFactory.createSecurityController(level, enabled);
         // Set name info of the level in the bottom layout panel
-        levelNameTextView.setText(String.valueOf(securityLevelList.get(level).getLevel()));
+        levelNameTextView.setText(String.valueOf(level+1));
     }
 
     private void handleOnOffButton(){
         //TODO. Set Message ENABLED/DISABLED
         securityController.powerButton();
+        Logger.write("ENABLED/DISABLED!");
     }
 
 }

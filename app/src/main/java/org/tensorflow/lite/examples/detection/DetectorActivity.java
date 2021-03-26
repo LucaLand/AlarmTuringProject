@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Size;
 import android.util.TypedValue;
@@ -91,6 +92,10 @@ public abstract class DetectorActivity extends CameraActivity implements OnImage
   private BorderedText borderedText;
 
 
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
