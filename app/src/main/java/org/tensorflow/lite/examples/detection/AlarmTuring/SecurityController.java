@@ -93,16 +93,16 @@ public class SecurityController {
 
 
     private int checkDetection(List<Detector.Recognition> detectionList ,RelationCategoryToAlert rel){
-        int num = 0, minOccurrences = rel.getMinObjectNumber();
+        int numOcc = 0, minOccurrences = rel.getMinObjectNumber();
         DetectionCategoryType category = rel.getDetectionCategory();
 
         for(Detector.Recognition detection : detectionList) {
             if(checkCategory(detection, category)){
-                num++;
-                if(minOccurrencesCheck(num, minOccurrences)){
-                    return num;
-                }
+                numOcc++;
             }
+        }
+        if(minOccurrencesCheck(numOcc, minOccurrences)){
+            return numOcc;
         }
         return -1;
     }
@@ -125,16 +125,17 @@ public class SecurityController {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime detectionTime;
         int diff;
-        timeStampDecreasing.add(numRel,now);
+        timeStampDecreasing.set(numRel,now);
 
         if(getLv(numRel) == 0){
-            timeStamp.add(numRel, now);
+            timeStamp.set(numRel, now);
             if(!decreaseTime)
                 lvAdd(numRel, 1);
             else
                 lvAdd(numRel, numOcc);
             //Debug
-            Logger.writeDebug("DIFF: "+ 0 +" || TIMEScorsa: "+ now.toString() + " || TIMENow: " + now.toString());
+            //Logger.writeDebug("DIFF: "+ 0 +" || TIMEScorsa: "+ now.toString() + " || TIMENow: " + now.toString());
+            Logger.writeDebug("NumOcc: " + numOcc);
         }else {
             detectionTime = timeStamp.get(numRel);
             if ((diff = compareDate(detectionTime, now)) >= 1) {
@@ -142,10 +143,11 @@ public class SecurityController {
                     lvAdd(numRel, 1);
                 else
                     lvAdd(numRel, numOcc);
-                timeStamp.add(numRel, now);
+                timeStamp.set(numRel, now);
             }
             //Debug
-            Logger.writeDebug("DIFF: "+diff+" || TIMEScorsa: "+ detectionTime.toString() + " || TIMENow: " + now.toString());
+            //Logger.writeDebug("DIFF: "+diff+" || TIMEScorsa: "+ detectionTime.toString() + " || TIMENow: " + now.toString());
+            Logger.writeDebug("NumOcc: " + numOcc);
         }
 
 
@@ -169,7 +171,7 @@ public class SecurityController {
             return;
         }else if(diff >= 1) {
             lvAdd(numRel, -0.4f);
-            timeStampDecreasing.add(numRel, now);
+            timeStampDecreasing.set(numRel, now);
             //Debug
             Logger.writeDebug("detectionLevelDecrease - DIFF: "+diff+" || TIMEScorsa: "+ timeDiff.toString() + " || TIMENow: " + now.toString());
         }
