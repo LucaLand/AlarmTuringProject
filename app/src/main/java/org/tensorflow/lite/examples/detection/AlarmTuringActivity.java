@@ -1,8 +1,8 @@
 package org.tensorflow.lite.examples.detection;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -51,6 +51,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private FloatingActionButton onOffButton, resetButton;
     private ProgressBar detectionLevelProgressBar;
 
+    //SOUNDS
+    private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,10 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
         secLevel= STARTING_SECURITY_LEVEL;
         securityController = SecurityControllerFactory.createSecurityController(STARTING_SECURITY_LEVEL, STARTING_CONTROLLER_ENABLED);
+
+        //SOUNDS
+        enabledSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.enabled_sound);
+        simpleBeapSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.beap_sound);
 
         //UI Text and buttons getting with findViewById
         TextViewLevelNum = findViewById(R.id.textLevel_Num);
@@ -161,6 +168,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void handleResetButton() {
+        if(!simpleBeapSoundPlayer.isPlaying())simpleBeapSoundPlayer.start();
         securityController.resetAlerts();
         securityController.setActivated(true);
         handleOnOffButton();
@@ -185,8 +193,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void setSecurityLevel(int level){
-        boolean enabled = securityController.isActivated();
-        securityController = SecurityControllerFactory.createSecurityController(level, enabled);
+        securityController = SecurityControllerFactory.createSecurityController(level, true);
+        handleOnOffButton();
+
         // Set name info of the level in the bottom layout panel
         levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
         //Set level num in the UI
@@ -201,10 +210,12 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         if(securityController.isActivated()){
             enabledtextView.setText("ENABLED");
             enabledtextView.setTextColor(Color.GREEN);
+            if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
         }else{
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
         }
+
         Logger.write("ENABLED/DISABLED!");
     }
 
