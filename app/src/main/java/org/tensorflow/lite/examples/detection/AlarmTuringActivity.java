@@ -80,19 +80,17 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     /**
-     * Function Executed in background Thread
+     * Function Executed in background Thread cyclically in ProcessImage()-super
      */
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected List<Detector.Recognition> alarmTuringMainFunc(List<Detector.Recognition> detections){
-
         //  FILTERING THE CATEGORIES VISUALIZED
         /** Initializing filters for the category to detect*/
         List<CategoryFilter> categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
 
-        ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
-
         /**Filtering all the detection by allowed Category and minimum confidence */
+        ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
         List<Detector.Recognition> results = DetectionsFilterer.FilterRecognition(detections, categoryFilterList, confFilter);
 
         /** RUN SECURITY CONTROLLER */
@@ -100,6 +98,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         return results;
     }
 
+    /** RUNS CYCLICALLY*/
     @Override
     protected void processImage() {
         super.processImage();
@@ -112,7 +111,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void checkAlerts() {
-
         String alertMessage = "";
         List<Alert> alertList = securityController.getAlertList();
         for(Alert alert : alertList){
@@ -164,7 +162,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private void handleResetButton() {
         securityController.resetAlerts();
         securityController.setActivated(true);
-        securityController.powerButton();
+        handleOnOffButton();
         engaged = false;
         alarmtextView.setVisibility(View.INVISIBLE);
         detectionLevelProgressBar.setProgress(0);
@@ -192,10 +190,12 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
         //Set level num in the UI
         TextViewLevelNum.setText(String.valueOf(secLevel));
+        //
+        detectionLevelProgressBar.setMax(securityController.getMinTime());
+
     }
 
     private void handleOnOffButton(){
-
         securityController.powerButton();
         if(securityController.isActivated()){
             enabledtextView.setText("ENABLED");

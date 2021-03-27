@@ -256,9 +256,9 @@ public class SecurityController {
 
     private void reset(){
         for(int i=0;i<relationList.size();i++){
-            detectionLevel.add(i,0f);
-            timeStamp.add(i,LocalDateTime.now());
-            timeStampDecreasing.add(i,LocalDateTime.now());
+            detectionLevel.set(i,0f);
+            timeStamp.set(i,LocalDateTime.now());
+            timeStampDecreasing.set(i,LocalDateTime.now());
         }
     }
 
