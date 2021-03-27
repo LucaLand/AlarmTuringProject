@@ -265,4 +265,13 @@ public class SecurityController {
     public List<Alert> getAlertList() {
         return alertList;
     }
+
+    public int getMinTime(){
+        int time, min = 20;
+        for(RelationCategoryToAlert rel : relationList){
+            if((time = rel.getTimeSeconds()) <= min)
+                min = time;
+        }
+        return min;
+    }
 }

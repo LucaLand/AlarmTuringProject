@@ -1,9 +1,12 @@
 package org.tensorflow.lite.examples.detection;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -42,8 +45,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     //UI - GRAPHICS References
     private ImageView plusImageView, minusImageView;
-    private TextView TextViewLevelNum, levelNameTextView, alarmtextView, alertMessageTextView;
+    private TextView TextViewLevelNum, levelNameTextView, alarmtextView, alertMessageTextView, enabledtextView;
     private FloatingActionButton onOffButton, resetButton;
+    private ProgressBar detectionLevelProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         resetButton = findViewById(R.id.buttonReset);
         alarmtextView = findViewById(R.id.labelAlarm);
         alertMessageTextView = findViewById(R.id.TextAlertMessage);
+        detectionLevelProgressBar = findViewById(R.id.detectionLevelProgerssBar);
+        enabledtextView = findViewById(R.id.enabledDistabledtextView);
+
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
@@ -69,6 +76,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         resetButton.setOnClickListener(this);
 
         setSecurityLevel(secLevel);
+        detectionLevelProgressBar.setMax(securityController.getMinTime());
     }
 
     /**
@@ -96,6 +104,11 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     protected void processImage() {
         super.processImage();
         checkAlerts();
+        updateLevelProgressBarr();
+    }
+
+    private void updateLevelProgressBarr() {
+        detectionLevelProgressBar.setProgress((int)securityController.getMaxDetectionLevel(), true);
     }
 
     private void checkAlerts() {
@@ -154,6 +167,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         securityController.powerButton();
         engaged = false;
         alarmtextView.setVisibility(View.INVISIBLE);
+        detectionLevelProgressBar.setProgress(0);
+        detectionLevelProgressBar.incrementProgressBy(-detectionLevelProgressBar.getProgress());
     }
 
     private void handleClickPlusButton(){
@@ -180,8 +195,15 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void handleOnOffButton(){
-        //TODO. Set Message ENABLED/DISABLED
+
         securityController.powerButton();
+        if(securityController.isActivated()){
+            enabledtextView.setText("ENABLED");
+            enabledtextView.setTextColor(Color.GREEN);
+        }else{
+            enabledtextView.setText("DISABLED");
+            enabledtextView.setTextColor(Color.RED);
+        }
         Logger.write("ENABLED/DISABLED!");
     }
 

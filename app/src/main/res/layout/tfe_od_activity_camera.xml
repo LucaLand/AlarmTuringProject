@@ -28,21 +28,36 @@
         android:orientation="vertical">
 
 
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            tools:context="org.tensorflow.demo.CameraActivity">
+
+        </FrameLayout>
+
         <ProgressBar
-            android:id="@+id/progressBar3"
+            android:id="@+id/detectionLevelProgerssBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="370dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="100dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="140dp"
+            android:layout_marginBottom="160dp"
+            android:indeterminate="false"
+
+            android:max="10"
+            android:progress="0"
+            android:progressBackgroundTint="@color/tfe_color_primary"
+            android:progressTint="@color/tfe_color_primary_dark"
             android:rotation="-90"
-            />
+            android:scaleX="15"
+            android:visibility="visible"
+            tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonOnOffAlarm"
@@ -52,8 +67,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="false"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="120dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="60dp"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_lock_power_off"
             android:contentDescription="TODO" />
@@ -66,25 +81,64 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="false"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="120dp"
-            android:layout_marginBottom="120dp"
+            android:layout_marginEnd="90dp"
+            android:layout_marginBottom="60dp"
             android:clickable="true"
             app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
 
-        <FrameLayout
-            android:id="@+id/container"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="org.tensorflow.demo.CameraActivity" >
+            android:layout_height="80dp"
+            android:layout_marginTop="1dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/caret" />
 
-            </LinearLayout>
-        </FrameLayout>
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TuringAlarm V2"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-150dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="1"
+                android:text="Made with"
+                android:textAlignment="textStart"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-5dp"
+                android:layout_marginTop="40dp"
+                android:rotationX="0"
+                android:src="@drawable/tfl2_logo" />
+
+            <TextView
+                android:id="@+id/enabledDistabledtextView"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:text="DISBALED"
+                android:textColor="#FF0000"
+                android:textSize="24sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -94,8 +148,9 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:background="@color/tfe_semi_transparent"
+                android:visibility="invisible"
                 app:logo="@drawable/caret"
                 app:subtitle="made with"
                 app:subtitleTextColor="#9A9A9A"
@@ -103,13 +158,6 @@
                 app:titleMargin="8px"
                 app:titleTextColor="#FFFFFF">
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:rotationX="0"
-                    android:src="@drawable/tfl2_logo"
-                    android:translationX="-30dp"
-                    android:translationY="15dp" />
             </androidx.appcompat.widget.Toolbar>
 
             <TextView
@@ -133,7 +181,7 @@
                 android:textAlignment="center"
                 android:textColor="#FF8282"
                 android:textIsSelectable="false"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="italic"
                 tools:text="@tools:sample/date/mmddyy" />
 
