@@ -116,7 +116,7 @@ public class SecurityController {
     }
 
 
-    /**TODO. Il time check
+    /**
      * In modo tale che la detection di un tale oggetto incrementi un contatore(level of alert) che rappresenta
      * i secondi di detection dell'elemento, ogni secondo nel quale avviene almeno una detection, e questo si azzeri
      * in caso passi un tempo standard (COSTANT) tipo 10s*/

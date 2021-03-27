@@ -197,11 +197,9 @@ public abstract class DetectorActivity extends CameraActivity implements OnImage
             final List<Detector.Recognition> detections = detector.recognizeImage(croppedBitmap);
 
 
-            /** Selecting the security Level
-             * TODO. a function that get the level from the UI (Stop the alamr, click on change to activate change, the + or - to change securityLevel*/
-            //SecurityLevel secLv = SecurityLevelEnum.INCASA;
-            //SecurityController alarmTuring = SecurityController.createSecurityController(secLv);
-            /** Our Function - Filter categories and sends results to the SecurityController*/
+            /** ALARM-TURING
+             * Our Function - Filter categories and sends results to the SecurityController
+             * ALL(not all) RUNS HERE*/
             final List<Detector.Recognition> results = alarmTuringMainFunc(detections);
 
 
