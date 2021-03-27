@@ -44,4 +44,11 @@ public class RelationCategoryToAlert {
     public boolean isDECREASE_TIME_BY_NUMBER() {
         return DECREASE_TIME_BY_NUMBER;
     }
+
+    @Override
+    public String toString() {
+        return "Class= " + detectionCategory.getCategory() +
+                " || alertType= " + alertType.getType() +
+                "|| time= " + TimeSeconds + " || ";
+    }
 }

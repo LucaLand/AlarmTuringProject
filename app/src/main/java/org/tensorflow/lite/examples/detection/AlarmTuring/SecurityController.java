@@ -12,7 +12,6 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.time.LocalDateTime;
@@ -23,15 +22,17 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecurityController {
 
+    //Constant
     private final int RESET_TIMEOUT_SECONDS = 5;
-    private boolean activated = false;
 
-
+    //Array variables
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
     List<Float> detectionLevel = new ArrayList<>();
-    List<Alert> alertsList = new ArrayList<>();
+    List<Alert> alertList = new ArrayList<>();
 
+    //Attributes
+    private boolean activated = false;
     private final List<RelationCategoryToAlert> relationList;
 
     public SecurityController(SecurityLevel securityLevel) {
@@ -41,7 +42,7 @@ public class SecurityController {
             timeStamp.add(i,LocalDateTime.now());
             timeStampDecreasing.add(i,LocalDateTime.now());
             /* Creating the alert that handles the specific Alerting detection */
-            alertsList.add(AlertFactory.createAlert(relationList.get(i).getAlertType()));
+            alertList.add(AlertFactory.createAlert(relationList.get(i).getAlertType()));
         }
     }
 
@@ -56,7 +57,7 @@ public class SecurityController {
             checker(detectionList, relation, numRel);
             numRel++;
         }
-        Logger.write("|| DetectionLevel: " + getLv(0)); //use: getMaxDetectionLevel()
+        Logger.write("|| DetectionLevel: " + getMaxDetectionLevel()); //use: getLv(0)
     }
 
 
@@ -76,7 +77,9 @@ public class SecurityController {
         }
 
         if(checkDetectionLevelRelation(numRel, alertTime)) {
-            alertsList.get(numRel).alert();
+            Alert alert = alertList.get(numRel);
+            alert.setAlertMessage(rel.toString() + "num= " + num);
+            alert.alert();
         }
 
         if(getLv(numRel)!=0 && !isDetected){
@@ -248,7 +251,7 @@ public class SecurityController {
     }
 
     public void resetAlerts(){
-        for(Alert alert : alertsList) alert.reset();
+        for(Alert alert : alertList) alert.reset();
     }
 
     private void reset(){
@@ -259,4 +262,7 @@ public class SecurityController {
         }
     }
 
+    public List<Alert> getAlertList() {
+        return alertList;
+    }
 }

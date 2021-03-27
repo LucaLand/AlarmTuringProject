@@ -10,11 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum SecurityLevelEnum implements SecurityLevel {
-    MAXIMUM(6,"Sicurezza: Massima",null), //IMPLEMENT desc e RELATION
-    FUORICASA(5,"Sicurezza:Alto Livello - Fuori casa",null), //IMPLEMENT desc e RELATION
-    HIGH(4,"Sicurezza:Alto Livello - Fuori casa",null), //IMPLEMENT desc e RELATION
-    MEDIUM(3,"Sicurezza: media", null), //IMPLEMENT desc e RELATION
-    INCASA(2,"Sicurezza: bassa - in casa", RelationFactory.createRelationList("PERSON,SOUND,8,1,true;")),
+    MAXIMUM(6,"Sicurezza: Massima", "PERSON,SOUND,6,2,true; ANIMAL,MAIL,8,2,false; VEHICLE,MSG,3,1,true"),
+    FUORICASA(5,"Sicurezza:Alto Livello - Fuori casa","PERSON,SOUND,5,1,true; ANIMAL,MAIL,8,2,false;"),
+    HIGH(4,"Sicurezza:Alto Livello - Fuori casa", "PERSON,SOUND,5,1,true; ANIMAL,MAIL,8,2,false;"),
+    MEDIUM(3,"Sicurezza: media", "PERSON,SOUND,5,1,true; ANIMAL,MAIL,8,2,false;"),
+    INCASA(2,"Sicurezza: bassa - in casa", "PERSON,SOUND,8,1,true;"),
     LOW(1, "Sicurezza bassa", Arrays.asList(new RelationCategoryToAlert(DetectionCategoryType.PERSON,AlertType.MSG)), "Descrizione");
 
 
@@ -25,26 +25,22 @@ public enum SecurityLevelEnum implements SecurityLevel {
     private List<RelationCategoryToAlert> rel;
 
     /**     CONSTRUCTOR      */
-    /*SecurityLevelEnum(int lv, String tipoLivello, String rel, String desc) {
+    SecurityLevelEnum(int lv, String levelName, String relationString) {
         this.lv = lv;
-        this.nomeLivello = tipoLivello;
-        this.descrizione = desc;
-        this.rel = RelationFactory.createRelationList(rel);
+        this.nomeLivello = levelName;
+        this.rel = RelationFactory.createRelationList(relationString);
     }
-     */
 
-    SecurityLevelEnum(int lv, String tipoLivello, List<RelationCategoryToAlert> rel, String desc) {
+    SecurityLevelEnum(int lv, String levelName, List<RelationCategoryToAlert> rel, String desc) {
         this.lv = lv;
-        this.nomeLivello = tipoLivello;
+        this.nomeLivello = levelName;
         this.descrizione = desc;
         this.rel = rel;
     }
 
-
-
-    SecurityLevelEnum(int lv, String tipoLivello, List<RelationCategoryToAlert> rel) {
+    SecurityLevelEnum(int lv, String levelName, List<RelationCategoryToAlert> rel) {
         this.lv = lv;
-        this.nomeLivello = tipoLivello;
+        this.nomeLivello = levelName;
         this.rel = rel;
     }
 
@@ -53,47 +49,5 @@ public enum SecurityLevelEnum implements SecurityLevel {
     public String getNomeLivello() {return nomeLivello;}
     public String getDescrizione() {return descrizione;}
     public List<RelationCategoryToAlert> getRel() {return rel;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**         DEPRECATI           */
-    /*
-    @Deprecated
-    private String alertTypes = AlertType.MSG.getType();
-    @Deprecated
-    private List<String> detectingCategory;
-    @Deprecated
-    SecurityLevelEnum(int lv, String tipoLivello, String desc, String alertTypes, List<String> categories) {
-        this.lv = lv;
-        this.nomeLivello = tipoLivello;
-        this.descrizione = desc;
-        this.alertTypes = alertTypes;
-        this.detectingCategory = categories;
-
-    }
-
-    @Deprecated
-    SecurityLevelEnum(int lv, String tipoLivello, String desc, String alertTypes) {
-        this.lv = lv;
-        this.nomeLivello = tipoLivello;
-        this.descrizione = desc;
-        this.alertTypes = alertTypes;
-    }
-     */
-
-
-
 
 }

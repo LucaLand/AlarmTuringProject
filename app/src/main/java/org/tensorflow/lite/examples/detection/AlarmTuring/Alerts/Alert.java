@@ -1,5 +1,7 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
+import android.widget.TextView;
+
 import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 
 
@@ -8,15 +10,31 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 public abstract class Alert extends Thread{
 
     private boolean engaged = false;
+    private String alertMessage;
 
 
+    public Alert() {
+    }
+
+    //TEST METHOD FOR UI ALERT MESSAGE
+    public Alert(String alertMessage) {
+        this.alertMessage = alertMessage;
+    }
+    public void setAlertMessage(String alertMessage) {
+        this.alertMessage = alertMessage;
+    }
+    public String getMessage(){
+        return alertMessage + "\n";
+    }
+
+
+    //Alert running in thread
     @Override
     public void run() {
             alarmAlert();
     }
 
-
-
+    //Alert function that run one time only
     public void alert(){
         if(!engaged) {
             engaged = true;

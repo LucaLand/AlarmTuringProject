@@ -1,5 +1,7 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
+import android.widget.TextView;
+
 import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 
 public class MailAlert extends Alert {
