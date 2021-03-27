@@ -1,5 +1,6 @@
 package org.tensorflow.lite.examples.detection;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -37,6 +38,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private final List<SecurityLevel> securityLevelList = SecurityControllerFactory.getSecurityLevelList();
     private final int BLINK_PERIOD_TIME = 10; //BLINK every 0.5sec (10frames)
 
+    private static Context context;
     //VARIABLES
     private int secLevel;
     private SecurityController securityController;
@@ -52,9 +54,10 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AlarmTuringActivity.context = getApplicationContext();
+
         secLevel= STARTING_SECURITY_LEVEL;
         securityController = SecurityControllerFactory.createSecurityController(STARTING_SECURITY_LEVEL, STARTING_CONTROLLER_ENABLED);
-
 
         //UI Text and buttons getting with findViewById
         TextViewLevelNum = findViewById(R.id.textLevel_Num);
@@ -67,7 +70,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         alertMessageTextView = findViewById(R.id.TextAlertMessage);
         detectionLevelProgressBar = findViewById(R.id.detectionLevelProgerssBar);
         enabledtextView = findViewById(R.id.enabledDistabledtextView);
-
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
@@ -142,7 +144,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
-
         switch (viewId){
             case R.id.plus:
                 handleClickPlusButton();
@@ -207,4 +208,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         Logger.write("ENABLED/DISABLED!");
     }
 
+    public static Context getContext() {
+        return context;
+    }
 }
