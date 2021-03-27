@@ -248,15 +248,18 @@ public class SecurityController {
     public void powerButton() {
         setActivated(!activated);
         if(!activated){
-            reset();
+            powerOff();
         }
     }
 
     public void resetAlerts(){
         for(Alert alert : alertList) alert.reset();
+        for(int i=0;i<relationList.size();i++){
+            alertList.set(i, AlertFactory.createAlert(relationList.get(i).getAlertType()));
+        }
     }
 
-    private void reset(){
+    private void powerOff(){
         for(int i=0;i<relationList.size();i++){
             detectionLevel.set(i,0f);
             timeStamp.set(i,LocalDateTime.now());
