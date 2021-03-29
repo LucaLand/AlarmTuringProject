@@ -85,7 +85,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
         secLevel= STARTING_SECURITY_LEVEL;
         setSecurityLevel(secLevel);
-        detectionLevelProgressBar.setMax(securityController.getMinTime());
+        detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
     }
 
     /**
@@ -116,7 +116,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void updateLevelProgressBarr() {
-        detectionLevelProgressBar.setProgress((int)securityController.getMaxDetectionLevel(), true);
+        detectionLevelProgressBar.setProgress((int)securityController.getMaxDetectionLevelProportionally(), true);
     }
 
     private void checkAlerts() {
@@ -193,17 +193,17 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void setSecurityLevel(int level){
-        synchronized (securityController) {
-            securityController = SecurityControllerFactory.createSecurityController(level, true);
-            handleOnOffButton();
+        securityController = SecurityControllerFactory.createSecurityController(level, true);
+        handleOnOffButton();
+        // Set name info of the level in the bottom layout panel
+        levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
+        //Set level num in the UI
+        TextViewLevelNum.setText(String.valueOf(secLevel));
+        //Initialize Max level of the progress bar to te minimum level to Alert
+        detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
 
-            // Set name info of the level in the bottom layout panel
-            levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
-            //Set level num in the UI
-            TextViewLevelNum.setText(String.valueOf(secLevel));
-            //
-            detectionLevelProgressBar.setMax(securityController.getMinTime());
-        }
+
+        Logger.write("SECURITY LEVEL SET TO: " + level);
     }
 
     private void handleOnOffButton(){
@@ -216,7 +216,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
         }
-
         Logger.write("ENABLED/DISABLED!");
     }
 

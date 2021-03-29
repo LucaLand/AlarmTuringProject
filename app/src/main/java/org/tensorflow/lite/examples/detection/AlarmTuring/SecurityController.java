@@ -34,6 +34,10 @@ public class SecurityController {
     //Attributes
     private boolean activated = false;
     private final List<RelationCategoryToAlert> relationList;
+    private int maxTimeAlert;
+
+    @Deprecated
+    private int minTimeAlert;
 
     public SecurityController(SecurityLevel securityLevel) {
         this.relationList = securityLevel.getRel();
@@ -44,6 +48,8 @@ public class SecurityController {
             /* Creating the alert that handles the specific Alerting detection */
             alertList.add(AlertFactory.createAlert(relationList.get(i).getAlertType()));
         }
+        minTimeAlert = getMinTime();
+        maxTimeAlert = getMaxTimeAlert();
     }
 
 
@@ -271,12 +277,35 @@ public class SecurityController {
         return alertList;
     }
 
+    @Deprecated
     public int getMinTime(){
-        int time, min = 20;
+        int time, min = 30;
         for(RelationCategoryToAlert rel : relationList){
             if((time = rel.getTimeSeconds()) <= min)
                 min = time;
         }
         return min;
     }
+
+    public int getMaxTimeAlert(){
+        int time, max=0;
+        for(RelationCategoryToAlert rel : relationList){
+            if((time = rel.getTimeSeconds()) >= max)
+                max = time;
+        }
+        return max;
+    }
+
+    public float getMaxDetectionLevelProportionally(){
+        float proportionalMax = 0, level;
+        int timeAlert;
+        for(int i=0; i<relationList.size(); i++){
+            timeAlert = relationList.get(i).getTimeSeconds();
+            level = detectionLevel.get(i) * maxTimeAlert / timeAlert;
+            if(level > proportionalMax)
+                proportionalMax = level;
+        }
+        return proportionalMax;
+    }
+
 }
