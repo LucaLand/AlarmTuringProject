@@ -51,4 +51,9 @@ public class RelationCategoryToAlert {
                 " || alertType= " + alertType.getType() +
                 "|| time= " + TimeSeconds + " || ";
     }
+
+    public String infoToString(){
+        return "Category: " + detectionCategory.getCategory() + "                                           Alert: " + alertType.getType() +
+                "\n\nAlertTime: " + TimeSeconds + "      -           MinOcc: " + minObjectNumber + "       -          Mutipl.: " + DECREASE_TIME_BY_NUMBER;
+    }
 }

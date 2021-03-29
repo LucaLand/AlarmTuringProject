@@ -5,9 +5,12 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -22,6 +25,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Detecti
 import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityControllerFactory;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
@@ -51,6 +55,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private TextView TextViewLevelNum, levelNameTextView, alarmtextView, alertMessageTextView, enabledtextView;
     private FloatingActionButton onOffButton, resetButton;
     private ProgressBar detectionLevelProgressBar;
+    private LinearLayout relationInfoBox;
 
     //SOUNDS
     private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
@@ -76,6 +81,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         alertMessageTextView = findViewById(R.id.TextAlertMessage);
         detectionLevelProgressBar = findViewById(R.id.detectionLevelProgerssBar);
         enabledtextView = findViewById(R.id.enabledDistabledtextView);
+        relationInfoBox = (LinearLayout) findViewById(R.id.relationBox);
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
@@ -201,8 +207,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         TextViewLevelNum.setText(String.valueOf(secLevel));
         //Initialize Max level of the progress bar to te minimum level to Alert
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
-
-
+        //Diplay Level info in bottom sheet layout
+        this.displayLevelInfo();
         Logger.write("SECURITY LEVEL SET TO: " + level);
     }
 
@@ -221,5 +227,36 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     public static Context getContext() {
         return context;
+    }
+
+    private void createTextView(String info){
+        /*RelativeLayout.LayoutParams paramsW = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        paramsW.setMargins(5, 5, 5, 5);
+        RelativeLayout.LayoutParams paramsH = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+        paramsH.setMargins(5, 5, 5, 5);
+        LinearLayout linearLayout = new LinearLayout(AlarmTuringActivity.getContext());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setLayoutParams(paramsW);
+         */
+        TextView infoTextView = new TextView(this);
+        TextView separatorTextView = new TextView(this);
+        separatorTextView.setText(getResources().getString(R.string.separatorString));
+        separatorTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        infoTextView.setPadding(0,3,3,3);
+        RelativeLayout.LayoutParams paramsH = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+        paramsH.setMargins(10, 10, 10, 5);
+        paramsH.alignWithParent = true;
+        infoTextView.setLayoutParams(paramsH);
+        infoTextView.setGravity(Gravity.CENTER);
+        infoTextView.setText(info);
+        relationInfoBox.addView(separatorTextView);
+        relationInfoBox.addView(infoTextView);
+    }
+
+    private void displayLevelInfo(){
+        relationInfoBox.removeAllViews();
+        for(RelationCategoryToAlert rel: securityLevelList.get(secLevel).getRel()){
+            createTextView(rel.infoToString());
+        }
     }
 }
