@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum SecurityLevelEnum implements SecurityLevel {
-    MAXIMUM(6,"Sicurezza: Massima", "PERSON,SOUND,6,2,true; ANIMAL,SOUND,8,2,false; VEHICLE,SOUND,3,1,true"),
+    MAXIMUM(6,"Sicurezza: Massima", "PERSON,SOUND,5,1,true; ANIMAL,SOUND,8,2,false; VEHICLE,SOUND,3,1,true"),
     FUORICASA(5,"Sicurezza:Alto Livello - Fuori casa","PERSON,SOUND,4,1,true; ANIMAL,MAIL,6,2,false; VEHICLE,MAIL,4,2,false;"),
     HIGH(4,"Sicurezza:Alto Livello - Fuori casa", "PERSON,SOUND,5,1,true; ANIMAL,MAIL,6,2,false; VEHICLE,MSG,5,1,false;"),
     MEDIUM(3,"Sicurezza: media", "PERSON,SOUND,8,1,true; ANIMAL,MAIL,8,2,false;"),
