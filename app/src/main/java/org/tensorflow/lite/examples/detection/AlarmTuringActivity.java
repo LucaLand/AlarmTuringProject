@@ -31,14 +31,15 @@ import java.util.List;
 public class AlarmTuringActivity extends DetectorActivity implements View.OnClickListener  {
 
     //CONSTANTS
-    // Minimum detection confidence to track a detection.
-    private final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+    private final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;    // Minimum detection confidence to track a detection.
     private final int STARTING_SECURITY_LEVEL = 1;
     private final boolean STARTING_CONTROLLER_ENABLED = false;
     private final List<SecurityLevel> securityLevelList = SecurityControllerFactory.getSecurityLevelList();
     private final int BLINK_PERIOD_TIME = 10; //BLINK every 0.5sec (10frames)
 
+    //Static Context
     private static Context context;
+
     //VARIABLES
     private int secLevel;
     private SecurityController securityController;
@@ -57,10 +58,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Saving Context
         AlarmTuringActivity.context = getApplicationContext();
-
-        secLevel= STARTING_SECURITY_LEVEL;
-        securityController = SecurityControllerFactory.createSecurityController(STARTING_SECURITY_LEVEL, STARTING_CONTROLLER_ENABLED);
 
         //SOUNDS
         enabledSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.enabled_sound);
@@ -84,6 +83,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         onOffButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
+        secLevel= STARTING_SECURITY_LEVEL;
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMinTime());
     }
@@ -193,16 +193,17 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void setSecurityLevel(int level){
-        securityController = SecurityControllerFactory.createSecurityController(level, true);
-        handleOnOffButton();
+        synchronized (securityController) {
+            securityController = SecurityControllerFactory.createSecurityController(level, true);
+            handleOnOffButton();
 
-        // Set name info of the level in the bottom layout panel
-        levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
-        //Set level num in the UI
-        TextViewLevelNum.setText(String.valueOf(secLevel));
-        //
-        detectionLevelProgressBar.setMax(securityController.getMinTime());
-
+            // Set name info of the level in the bottom layout panel
+            levelNameTextView.setText(securityLevelList.get(level).getNomeLivello());
+            //Set level num in the UI
+            TextViewLevelNum.setText(String.valueOf(secLevel));
+            //
+            detectionLevelProgressBar.setMax(securityController.getMinTime());
+        }
     }
 
     private void handleOnOffButton(){
