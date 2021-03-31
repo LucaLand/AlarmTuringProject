@@ -83,7 +83,9 @@ public class SecurityController {
             isDetected = true;
         }
 
+        if(!alert.isEngaged())
         alert.setAlertMessage(writeAlertMessage(rel, num)); //rel.toString() + "num:" + num
+
         if(checkDetectionLevelRelation(numRel, alertTime)) {
                 alert.alert();
         }
@@ -118,7 +120,7 @@ public class SecurityController {
     }
 
     private String writeAlertMessage(RelationCategoryToAlert rel, int num){
-        String msg = rel.getDetectionCategory().getCategory() + " n."+num +
+        String msg = num +" - "+rel.getDetectionCategory().getCategory() +
                 " | time: " + rel.getTimeSeconds() + "s  alertType: " + rel.getAlertType();
         return msg;
     }
