@@ -6,7 +6,7 @@ import java.util.List;
 public class AlertFactory {
 
 
-    public static Alert createAlert(AlertType type){
+    public static ThreadAlert createAlert(AlertType type){
         switch (type){
             case MSG:
                 return new UIMessageAlert();
@@ -24,8 +24,8 @@ public class AlertFactory {
 
 
     /** BROKEN */
-    public static List<Alert> createAlert(String s){
-        List<Alert> alertList = new LinkedList<>();
+    public static List<ThreadAlert> createAlert(String s){
+        List<ThreadAlert> alertList = new LinkedList<>();
         if(s.contains(AlertType.MSG.getType())){alertList.add(new UIMessageAlert());}
         if(s.contains(AlertType.MAIL.getType())){alertList.add(new MailAlert());} //to implement MailAlert class
         if(s.contains(AlertType.SOUND.getType())){alertList.add(new SoundAlert());} //to implement SoundAlert class

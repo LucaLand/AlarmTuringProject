@@ -2,7 +2,6 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
@@ -11,7 +10,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuringActivity;
 import org.tensorflow.lite.examples.detection.R;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class SoundAlert extends Alert {
+public class SoundAlert extends ThreadAlert {
 
 final MediaPlayer alertSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.alarm_buzzer);
     /** IMPLEMENTING CLASS */

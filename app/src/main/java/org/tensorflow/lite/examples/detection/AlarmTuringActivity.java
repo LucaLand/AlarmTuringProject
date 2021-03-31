@@ -1,5 +1,8 @@
 package org.tensorflow.lite.examples.detection;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -17,7 +20,7 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.Alert;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.ThreadAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
@@ -34,12 +37,13 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AlarmTuringActivity extends DetectorActivity implements View.OnClickListener  {
 
+
     //CONSTANTS
     private final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;    // Minimum detection confidence to track a detection.
     private final int STARTING_SECURITY_LEVEL = 1;
-    private final boolean STARTING_CONTROLLER_ENABLED = false;
     private final List<SecurityLevel> securityLevelList = SecurityControllerFactory.getSecurityLevelList();
     private final int BLINK_PERIOD_TIME = 10; //BLINK every 0.5sec (10frames)
+    public static final String CHANNEL_ID = "5";
 
     //Static Context
     private static Context context;
@@ -89,6 +93,10 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         onOffButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
+        //NOTIFY
+        createNotificationChannel();
+
+        //INITIALIZATION
         secLevel= STARTING_SECURITY_LEVEL;
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
@@ -127,8 +135,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     private void checkAlerts() {
         String alertMessage = "";
-        List<Alert> alertList = securityController.getAlertList();
-        for(Alert alert : alertList){
+        List<ThreadAlert> alertList = securityController.getAlertList();
+        for(ThreadAlert alert : alertList){
             if(alert.isEngaged()) {
                 engaged = true;
                 alertMessage += alert.getMessage();
@@ -230,17 +238,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void createTextView(String info){
-        /*RelativeLayout.LayoutParams paramsW = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-        paramsW.setMargins(5, 5, 5, 5);
-        RelativeLayout.LayoutParams paramsH = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-        paramsH.setMargins(5, 5, 5, 5);
-        LinearLayout linearLayout = new LinearLayout(AlarmTuringActivity.getContext());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setLayoutParams(paramsW);
-         */
         TextView infoTextView = new TextView(this);
         TextView separatorTextView = new TextView(this);
-        separatorTextView.setText(getResources().getString(R.string.separatorString));
+        separatorTextView.setText("\n" + getResources().getString(R.string.separatorString));
         separatorTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         infoTextView.setPadding(0,3,3,3);
         RelativeLayout.LayoutParams paramsH = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -259,4 +259,25 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             createTextView(rel.infoToString());
         }
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "ciao";
+            String description = "Ciao2";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            channel.setShowBadge(true);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+
 }

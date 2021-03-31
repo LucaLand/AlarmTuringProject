@@ -6,7 +6,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.Alert;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.ThreadAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
@@ -29,7 +29,7 @@ public class SecurityController {
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
     List<Float> detectionLevel = new ArrayList<>();
-    List<Alert> alertList = new ArrayList<>();
+    List<ThreadAlert> alertList = new ArrayList<>();
 
     //Attributes
     private boolean activated = false;
@@ -73,6 +73,7 @@ public class SecurityController {
 
         int alertTime = rel.getTimeSeconds();
         boolean increaseLevelMultyple = rel.isDECREASE_TIME_BY_NUMBER();
+        ThreadAlert alert = alertList.get(numRel);
 
         boolean isDetected = false;
         int num;
@@ -82,10 +83,9 @@ public class SecurityController {
             isDetected = true;
         }
 
+        alert.setAlertMessage(writeAlertMessage(rel, num)); //rel.toString() + "num:" + num
         if(checkDetectionLevelRelation(numRel, alertTime)) {
-            Alert alert = alertList.get(numRel);
-            alert.setAlertMessage(rel.toString() + "num= " + num);
-            alert.alert();
+                alert.alert();
         }
 
         if(getLv(numRel)!=0 && !isDetected){
@@ -115,6 +115,12 @@ public class SecurityController {
 
     private boolean checkCategory(Detector.Recognition detection, DetectionCategoryType categoryType ){
         return CategoryFilterFactory.createSimpleFilter(categoryType).check(detection);
+    }
+
+    private String writeAlertMessage(RelationCategoryToAlert rel, int num){
+        String msg = rel.getDetectionCategory().getCategory() + " n."+num +
+                " | time: " + rel.getTimeSeconds() + "s  alertType: " + rel.getAlertType();
+        return msg;
     }
 
     private boolean minOccurrencesCheck(int occ, int minOcc){
@@ -259,7 +265,7 @@ public class SecurityController {
     }
 
     public void resetAlerts(){
-        for(Alert alert : alertList) alert.reset();
+        for(ThreadAlert alert : alertList) alert.reset();
         for(int i=0;i<relationList.size();i++){
             alertList.set(i, AlertFactory.createAlert(relationList.get(i).getAlertType()));
         }
@@ -273,7 +279,7 @@ public class SecurityController {
         }
     }
 
-    public List<Alert> getAlertList() {
+    public List<ThreadAlert> getAlertList() {
         return alertList;
     }
 
@@ -288,12 +294,13 @@ public class SecurityController {
     }
 
     public int getMaxTimeAlert(){
-        int time, max=0;
+        /*int time, max=0;
         for(RelationCategoryToAlert rel : relationList){
             if((time = rel.getTimeSeconds()) >= max)
                 max = time;
         }
-        return max;
+         */
+        return 100; //Use max=100 to give a better view of the progressBar
     }
 
     public float getMaxDetectionLevelProportionally(){
