@@ -10,7 +10,7 @@ import org.tensorflow.lite.examples.detection.R;
 import static android.app.Notification.DEFAULT_SOUND;
 import static android.app.Notification.DEFAULT_VIBRATE;
 
-public class UIMessageAlert extends ThreadAlert {
+public class UIMessageThreadAlert extends ThreadAlert {
 
     int notificationID=0;
 

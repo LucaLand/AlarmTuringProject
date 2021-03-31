@@ -6,7 +6,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.ThreadAlert;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.Alert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
@@ -29,7 +29,7 @@ public class SecurityController {
     List<LocalDateTime> timeStamp = new ArrayList<>();
     List<LocalDateTime> timeStampDecreasing = new ArrayList<>();
     List<Float> detectionLevel = new ArrayList<>();
-    List<ThreadAlert> alertList = new ArrayList<>();
+    List<Alert> alertList = new ArrayList<>();
 
     //Attributes
     private boolean activated = false;
@@ -73,7 +73,7 @@ public class SecurityController {
 
         int alertTime = rel.getTimeSeconds();
         boolean increaseLevelMultyple = rel.isDECREASE_TIME_BY_NUMBER();
-        ThreadAlert alert = alertList.get(numRel);
+        Alert alert = alertList.get(numRel);
 
         boolean isDetected = false;
         int num;
@@ -265,7 +265,7 @@ public class SecurityController {
     }
 
     public void resetAlerts(){
-        for(ThreadAlert alert : alertList) alert.reset();
+        for(Alert alert : alertList) alert.reset();
         for(int i=0;i<relationList.size();i++){
             alertList.set(i, AlertFactory.createAlert(relationList.get(i).getAlertType()));
         }
@@ -279,7 +279,7 @@ public class SecurityController {
         }
     }
 
-    public List<ThreadAlert> getAlertList() {
+    public List<Alert> getAlertList() {
         return alertList;
     }
 

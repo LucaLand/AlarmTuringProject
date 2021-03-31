@@ -20,7 +20,7 @@ import androidx.annotation.RequiresApi;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.ThreadAlert;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.Alert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
@@ -135,8 +135,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     private void checkAlerts() {
         String alertMessage = "";
-        List<ThreadAlert> alertList = securityController.getAlertList();
-        for(ThreadAlert alert : alertList){
+        List<Alert> alertList = securityController.getAlertList();
+        for(Alert alert : alertList){
             if(alert.isEngaged()) {
                 engaged = true;
                 alertMessage += alert.getMessage();
