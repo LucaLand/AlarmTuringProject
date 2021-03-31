@@ -13,7 +13,7 @@ import org.tensorflow.lite.examples.detection.R;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SoundAlert extends Alert {
 
-final MediaPlayer alertSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.alarm_buzzer);
+final MediaPlayer alertSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.coro);
     /** IMPLEMENTING CLASS */
 
 
