@@ -47,8 +47,10 @@ public class FileSupport {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
 
         return levelList;

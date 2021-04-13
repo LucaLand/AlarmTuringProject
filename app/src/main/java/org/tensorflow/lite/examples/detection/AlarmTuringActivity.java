@@ -37,12 +37,11 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AlarmTuringActivity extends DetectorActivity implements View.OnClickListener  {
 
-
     //CONSTANTS
     private final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;    // Minimum detection confidence to track a detection.
     private final int STARTING_SECURITY_LEVEL = 1;
     private final List<SecurityLevel> securityLevelList = SecurityControllerFactory.getSecurityLevelList();
-    private final int BLINK_PERIOD_TIME = 10; //BLINK every 0.5sec (10frames)
+    private final int BLINK_PERIOD_TIME = 10; //BLINK every (10frames)
     public static final String CHANNEL_ID = "5";
 
     //Static Context
@@ -108,7 +107,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected List<Detector.Recognition> alarmTuringMainFunc(List<Detector.Recognition> detections){
-        //  FILTERING THE CATEGORIES VISUALIZED
         /** Initializing filters for the category to detect*/
         List<CategoryFilter> categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
 

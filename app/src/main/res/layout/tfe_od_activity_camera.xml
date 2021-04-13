@@ -167,13 +167,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:text="ALARM"
+                android:text="@string/ALARM_label"
                 android:textAlignment="center"
                 android:textColor="#FF0000"
                 android:textIsSelectable="false"
                 android:textSize="36sp"
                 android:textStyle="bold|italic"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                tools:text="@string/ALARM_label"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/TextAlertMessage"
@@ -185,7 +187,7 @@
                 android:textIsSelectable="false"
                 android:textSize="16sp"
                 android:textStyle="italic"
-                tools:text="@tools:sample/date/mmddyy" />
+                tools:text="@string/AlarmMsgExample" />
 
         </LinearLayout>
 

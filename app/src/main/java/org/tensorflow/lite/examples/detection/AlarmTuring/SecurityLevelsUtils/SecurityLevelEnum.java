@@ -21,8 +21,9 @@ public enum SecurityLevelEnum implements SecurityLevel {
     /**     PARAMETERS      */
     private final int lv;
     private final String nomeLivello;
-    private String descrizione = "";
     private List<RelationCategoryToAlert> rel;
+    private String descrizione = "";
+
 
     /**     CONSTRUCTOR      */
     SecurityLevelEnum(int lv, String levelName, String relationString) {

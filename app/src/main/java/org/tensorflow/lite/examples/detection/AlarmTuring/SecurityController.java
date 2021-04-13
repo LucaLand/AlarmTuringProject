@@ -21,9 +21,8 @@ import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecurityController {
-
     //Constant
-    private final int RESET_TIMEOUT_SECONDS = 5;
+    private final int RESET_TIMEOUT_SECONDS = 8;
 
     //Array variables
     List<LocalDateTime> timeStamp = new ArrayList<>();
@@ -57,7 +56,6 @@ public class SecurityController {
     public synchronized void run(List<Detector.Recognition> detectionList){
         if(!activated)
             return;
-
         int numRel=0;
         for(RelationCategoryToAlert relation : relationList){
             checker(detectionList, relation, numRel);
@@ -121,7 +119,7 @@ public class SecurityController {
 
     private String writeAlertMessage(RelationCategoryToAlert rel, int num){
         String msg = num +" - "+rel.getDetectionCategory().getCategory() +
-                " | time: " + rel.getTimeSeconds() + "s  alertType: " + rel.getAlertType();
+                " | time: " + rel.getTimeSeconds() + "s | alertType: " + rel.getAlertType();
         return msg;
     }
 
@@ -133,7 +131,7 @@ public class SecurityController {
     /**
      * In modo tale che la detection di un tale oggetto incrementi un contatore(level of alert) che rappresenta
      * i secondi di detection dell'elemento, ogni secondo nel quale avviene almeno una detection, e questo si azzeri
-     * in caso passi un tempo standard (COSTANT) tipo 10s*/
+     * in caso passi un tempo standard (COSTANT) tipo 5s*/
     @RequiresApi(api = Build.VERSION_CODES.O)
     private synchronized void detectionLevelIncrease(int numRel, boolean decreaseTime, int numOcc){
         LocalDateTime now = LocalDateTime.now();

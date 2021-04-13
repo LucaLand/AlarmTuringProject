@@ -28,4 +28,6 @@ public abstract class GeneralAlert implements Alert{
     public void setEngaged(boolean engaged) {
         this.engaged = engaged;
     }
+
+    public abstract void alert();
 }

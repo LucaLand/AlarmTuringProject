@@ -4,13 +4,10 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.Alerts.AlertType;
 
 public enum DetectionCategoryType {
     PERSON("Person"), ANIMAL("Animal"), VEHICLE("Vehicle");
-
     private String category;
-
     DetectionCategoryType(String category) {
         this.category = category;
     }
-
     public String getCategory() {
         return category;
     }

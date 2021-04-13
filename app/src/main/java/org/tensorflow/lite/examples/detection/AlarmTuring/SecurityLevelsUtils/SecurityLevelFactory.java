@@ -20,7 +20,6 @@ public class SecurityLevelFactory {
         for(SecurityLevel level: SecurityLevelEnum.values()){
             levels[level.getLevel()-1] = level;
         }
-
         levelsList.addAll(Arrays.asList(levels));
 
         try{
@@ -34,7 +33,7 @@ public class SecurityLevelFactory {
 
     private static List<SecurityLevel> importLevelsFromFile() throws FileNotFoundException {
         String fileName = SecurityLevelFactory.class.getAnnotation(Filename.class).fileName();
-        List<SecurityLevel> levelList = new LinkedList<>();
+        List<SecurityLevel> levelList;
 
         try{
             levelList = FileSupport.readSecurityLevels(fileName);

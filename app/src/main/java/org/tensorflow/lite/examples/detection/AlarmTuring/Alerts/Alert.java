@@ -1,11 +1,11 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 public interface Alert {
-    public void alert();
-    public void setAlertMessage(String alertMessage);
-    public String getMessage();
+    void alert();
+    void setAlertMessage(String alertMessage);
+    String getMessage();
 
-    public void reset();
-    public boolean isEngaged();
-    public void setEngaged(boolean engaged);
+    void reset();
+    boolean isEngaged();
+    void setEngaged(boolean engaged);
 }
