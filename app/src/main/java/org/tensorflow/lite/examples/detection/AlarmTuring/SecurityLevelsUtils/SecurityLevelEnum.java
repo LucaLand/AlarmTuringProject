@@ -14,9 +14,9 @@ public enum SecurityLevelEnum implements SecurityLevel {
     MEDIUMSEC(5,"Sicurezza: Media", "PERSON,SOUND,6,1,true; VEHICLE,SOUND,3,1,false;"),
     NIGHTSEC(4,"Sicurezza: Notturna", "ANIMAL,MSG,6,2,false; PERSON,SOUND,5,1,true; VEHICLE,MAIL,4,1,false;"),
     LOWSEC(3,"Sicurezza: Bassa", "ANIMAL,MSG,6,1,true; PERSON,MAIL,5,2,false;"),
-    VEHICLE(2,"Veicoli", "VEHICLE,MSG,4,1,true"),
-    PERSON(1,"Persone","PERSON,MSG,4,1,true;"),
-    ANIMALS(0, "Animali", "ANIMAL,MSG,4,1,false;", "Descrizione opzionale");
+    VEHICLE(2,"Veicoli", "VEHICLE,MSG,4,1,false"),
+    PERSON(1,"Persone","PERSON,MSG,4,2,false;"),
+    ANIMALS(0, "Animali", "ANIMAL,MSG,4,1,false; ANIMAL,SOUND,2,7,false;", "Descrizione opzionale");
 
 
     /**     PARAMETERS      */
