@@ -1,0 +1,2 @@
+{"lv": 10, "name":"custom1", "rel":"ANIMAL,SOUND,2,1,false;"}.
+{"lv": 11, "name":"custom2", "rel":"ANIMAL,SOUND,55,82,false;"}.

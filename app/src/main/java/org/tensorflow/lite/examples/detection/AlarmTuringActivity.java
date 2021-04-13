@@ -30,6 +30,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityControllerFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
+import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.util.List;
@@ -39,13 +40,15 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     //CONSTANTS
     private final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;    // Minimum detection confidence to track a detection.
-    private final int STARTING_SECURITY_LEVEL = 1;
-    private final List<SecurityLevel> securityLevelList = SecurityControllerFactory.getSecurityLevelList();
+    private final int STARTING_SECURITY_LEVEL = 0;
+
     private final int BLINK_PERIOD_TIME = 10; //BLINK every (10frames)
     public static final String CHANNEL_ID = "5";
 
     //Static Context
     private static Context context;
+
+    private List<SecurityLevel> securityLevelList;
 
     //VARIABLES
     private int secLevel;
@@ -68,6 +71,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         //Saving Context
         AlarmTuringActivity.context = getApplicationContext();
+
+        securityLevelList = SecurityControllerFactory.getSecurityLevelList();
 
         //SOUNDS
         enabledSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.enabled_sound);

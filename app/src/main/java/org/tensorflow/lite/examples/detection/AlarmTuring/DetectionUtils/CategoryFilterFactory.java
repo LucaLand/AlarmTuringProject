@@ -56,7 +56,8 @@ public class CategoryFilterFactory {
 
     /** {"category":"ANIMAL": "dog,cat,horse,etc"}\n) */
     protected static List<CategoryFilter> initializeRecognitionFiltersFromFile() throws FileNotFoundException {
-        String fileName = SecurityLevelFactory.class.getAnnotation(Filename.class).fileName();
+        //TODO. Fix the annotation fileName property (remain "SecurityLevels.txt")
+        String fileName = "CategoryFilter.txt";  //SecurityLevelFactory.class.getAnnotation(Filename.class).fileName();
         List<CategoryFilter> categoryFilterList = new LinkedList<>();
 
         try {

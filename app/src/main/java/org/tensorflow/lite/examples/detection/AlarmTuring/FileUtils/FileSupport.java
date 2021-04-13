@@ -1,13 +1,17 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils;
 
+import android.content.Context;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
+import org.tensorflow.lite.examples.detection.AlarmTuringActivity;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,7 +24,11 @@ import java.util.List;
 public class FileSupport {
 
     public static BufferedReader openFile(String fileName) throws FileNotFoundException {
-        try(BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))) {
+        try{
+            BufferedReader r = new BufferedReader(new InputStreamReader(AlarmTuringActivity.getContext().getAssets().open(fileName)));
+            Logger.writeDebug("OPENING FILE: " + fileName);
+            if (r==null)
+                throw new FileNotFoundException("File:" + fileName + " not found!");
             return r;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -51,6 +59,12 @@ public class FileSupport {
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
+        }finally {
+            try {
+                r.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return levelList;

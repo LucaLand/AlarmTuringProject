@@ -14,16 +14,17 @@ import java.util.List;
 public class SecurityLevelFactory {
 
     public static List<SecurityLevel> createSecurityLevelList(){
-        List<SecurityLevel> levelsList = new ArrayList<>();
+        List<SecurityLevel> levelsList = new ArrayList<>(), fileLevelsList;
         SecurityLevel[] levels = SecurityLevelEnum.values();
 
         for(SecurityLevel level: SecurityLevelEnum.values()){
-            levels[level.getLevel()-1] = level;
+            levels[level.getLevel()] = level;
         }
         levelsList.addAll(Arrays.asList(levels));
 
         try{
-            levelsList.addAll(importLevelsFromFile());
+            if((fileLevelsList = importLevelsFromFile()) != null)
+                levelsList.addAll(fileLevelsList);
         } catch (FileNotFoundException e) {
             Logger.writeDebug("["+ SecurityLevelFactory.class + "]:\t" + e.getMessage());
         }
