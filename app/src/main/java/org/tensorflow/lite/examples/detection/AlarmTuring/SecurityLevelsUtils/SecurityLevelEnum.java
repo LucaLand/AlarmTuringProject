@@ -10,12 +10,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum SecurityLevelEnum implements SecurityLevel {
-    MAXIMUM(6,"Sicurezza: Massima", "PERSON,SOUND,5,1,true; ANIMAL,SOUND,8,2,false; VEHICLE,SOUND,3,1,true"),
-    FUORICASA(5,"Sicurezza:Alto Livello - Fuori casa","PERSON,SOUND,4,1,true; ANIMAL,MAIL,6,2,false; VEHICLE,MAIL,4,2,false;"),
-    HIGH(4,"Sicurezza:Alto Livello - Fuori casa", "PERSON,SOUND,5,1,true; ANIMAL,MAIL,6,2,false; VEHICLE,MSG,5,1,false;"),
-    MEDIUM(3,"Sicurezza: media", "PERSON,SOUND,8,1,true; ANIMAL,MAIL,8,2,false;"),
-    INCASA(2,"Sicurezza: bassa - in casa", "PERSON,SOUND,8,2,true;"),
-    LOW(1, "Sicurezza bassa", "PERSON,MSG,8,1,false;", "Descrizione");
+    MAXSEC(6,"Sicurezza: Massima", "ANIMAL,MAIL,4,2,true; PERSON,SOUND,3,1,true; VEHICLE,SOUND,3,1,true;"),
+    MEDIUMSEC(5,"Sicurezza: Media", "PERSON,SOUND,6,1,true; VEHICLE,SOUND,3,1,false;"),
+    NIGHTSEC(4,"Sicurezza: Notturna", "ANIMAL,MSG,6,2,false; PERSON,SOUND,5,1,true; VEHICLE,MAIL,4,1,false;"),
+    LOWSEC(3,"Sicurezza: Bassa", "ANIMAL,MSG,6,1,true; PERSON,MAIL,5,2,false;"),
+    VEHICLE(2,"Veicoli", "VEHICLE,MSG,4,1,true"),
+    PERSON(1,"Persone","PERSON,MSG,4,1,true;"),
+    ANIMALS(0, "Animali", "ANIMAL,MSG,4,1,false;", "Descrizione opzionale");
 
 
     /**     PARAMETERS      */
