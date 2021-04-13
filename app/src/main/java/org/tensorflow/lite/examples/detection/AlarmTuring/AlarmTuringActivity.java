@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection;
+package org.tensorflow.lite.examples.detection.AlarmTuring;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -25,12 +25,11 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityController;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityControllerFactory;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
-import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
+import org.tensorflow.lite.examples.detection.DetectorActivity;
+import org.tensorflow.lite.examples.detection.R;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.util.List;
@@ -71,7 +70,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         //Saving Context
         AlarmTuringActivity.context = getApplicationContext();
-
+        //Loading all security levels
         securityLevelList = SecurityControllerFactory.getSecurityLevelList();
 
         //SOUNDS

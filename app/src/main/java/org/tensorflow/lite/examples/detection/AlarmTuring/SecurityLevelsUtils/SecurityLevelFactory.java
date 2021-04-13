@@ -2,12 +2,11 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils;
 
 import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.FileSupport;
 import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.Filename;
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 @Filename(fileName = "SecurityLevels.txt")

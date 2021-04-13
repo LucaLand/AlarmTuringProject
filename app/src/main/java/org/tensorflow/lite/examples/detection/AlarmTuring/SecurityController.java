@@ -12,6 +12,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionCategoryType;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.time.LocalDateTime;

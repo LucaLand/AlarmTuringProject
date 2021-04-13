@@ -5,8 +5,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
-import org.tensorflow.lite.examples.detection.AlarmTuringActivity;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
+import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 import org.tensorflow.lite.examples.detection.R;
 
 @RequiresApi(api = Build.VERSION_CODES.O)

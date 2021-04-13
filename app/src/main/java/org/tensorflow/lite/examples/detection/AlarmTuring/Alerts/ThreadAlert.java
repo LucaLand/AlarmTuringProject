@@ -1,8 +1,6 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
-import android.widget.TextView;
-
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 
 
 // TODO. Si protrebbe usare la put sull'HANDLER come fatto in camera activity, probabilmente è preferibile

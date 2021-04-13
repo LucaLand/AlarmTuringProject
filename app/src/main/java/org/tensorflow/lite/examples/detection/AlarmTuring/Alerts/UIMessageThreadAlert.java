@@ -3,8 +3,8 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
-import org.tensorflow.lite.examples.detection.AlarmTuringActivity;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
+import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 import org.tensorflow.lite.examples.detection.R;
 
 import static android.app.Notification.DEFAULT_SOUND;

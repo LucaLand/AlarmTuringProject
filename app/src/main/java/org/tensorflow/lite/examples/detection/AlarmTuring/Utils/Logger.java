@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection.AlarmTuring;
+package org.tensorflow.lite.examples.detection.AlarmTuring.Utils;
 
 public class Logger {
     public static void write(String message){

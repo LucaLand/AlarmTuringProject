@@ -1,20 +1,17 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils;
 
-import android.content.Context;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
-import org.tensorflow.lite.examples.detection.AlarmTuring.Logger;
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevelFactory;
-import org.tensorflow.lite.examples.detection.AlarmTuringActivity;
+import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;

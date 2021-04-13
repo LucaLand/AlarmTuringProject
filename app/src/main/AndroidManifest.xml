@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme.ObjectDetection">
 
         <activity
-            android:name=".AlarmTuringActivity"
+            android:name=".AlarmTuring.AlarmTuringActivity"
             android:label="@string/tfe_od_app_name"
             android:screenOrientation="portrait">
             <intent-filter>
