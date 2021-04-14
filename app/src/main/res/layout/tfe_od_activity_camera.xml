@@ -137,7 +137,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="#4DBFBFBF"
-                android:text="DISBALED"
+                android:text="DISABLED"
                 android:textColor="#FF0000"
                 android:textSize="24sp" />
         </LinearLayout>
@@ -195,5 +195,6 @@
 
     <include
         android:id="@+id/bottom_sheet_layout"
-        layout="@layout/tfe_od_layout_bottom_sheet" />
+        layout="@layout/tfe_od_layout_bottom_sheet"
+        tools:visibility="invisible" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
