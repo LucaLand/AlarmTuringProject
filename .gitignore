@@ -18,3 +18,5 @@
 app/src/androidTest/
 lib_interpreter/build
 lib_task_api/build
+
+bugtofix.txt

@@ -34,6 +34,8 @@ import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.util.List;
 
+//TODO. Bug fixes: read the bugtofix.txt file in the root dir
+
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AlarmTuringActivity extends DetectorActivity implements View.OnClickListener  {
 
