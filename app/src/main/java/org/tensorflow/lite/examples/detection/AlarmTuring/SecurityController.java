@@ -23,7 +23,7 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecurityController {
     //Constant
-    private final int RESET_TIMEOUT_SECONDS = 8;
+    private final int RESET_TIMEOUT_SECONDS = 6;
 
     //Array variables
     List<LocalDateTime> timeStamp = new ArrayList<>();
