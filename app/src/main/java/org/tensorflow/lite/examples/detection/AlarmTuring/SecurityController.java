@@ -258,14 +258,14 @@ public class SecurityController {
         this.activated = activated;
     }
 
-    public void powerButton() {
+    public synchronized void powerButton() {
         setActivated(!activated);
         if(!activated){
             powerOff();
         }
     }
 
-    public void resetAlerts(){
+    public synchronized void resetAlerts(){
         for(Alert alert : alertList) alert.reset();
         for(int i=0;i<relationList.size();i++){
             alertList.set(i, AlertFactory.createAlert(relationList.get(i).getAlertType()));
