@@ -35,6 +35,7 @@ public class RelationFactory {
         return relationList;
     }
 
+    /* UNUSED FUNCTION
     public static RelationCategoryToAlert createRelation(JSONObject json){
         try {
             DetectionCategoryType category = DetectionCategoryType.valueOf(json.getString("category"));
@@ -48,4 +49,5 @@ public class RelationFactory {
         }
         return null;
     }
+    */
 }

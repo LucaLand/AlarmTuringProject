@@ -67,6 +67,7 @@ public class FileSupport {
         return levelList;
     }
 
+    /* UNUSED FUNCTION (not util)
     public static List<RelationCategoryToAlert> readRelations(String fileName) throws FileNotFoundException {
         List<RelationCategoryToAlert> relationList = new LinkedList<>();
         String line;
@@ -88,7 +89,7 @@ public class FileSupport {
 
         return relationList;
     }
-
+     */
 
     /**FILE Category:
      * {"category":"ANIMAL", "classes":"dog,cat,horse,bear,bird,cow;"}.
