@@ -9,7 +9,14 @@ public class MailAlert extends GeneralAlert {
 
     @Override
     public void alert() {
+        if(!isEngaged())
+            setEngaged(true);
+        invioMail();
         Logger.write("MAIL!\n" + getMessage());
+    }
+
+    private void invioMail() {
+        /** TO IMPLEMENT */
     }
 
 }
