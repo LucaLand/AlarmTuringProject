@@ -1,2 +1,4 @@
 {"lv": 10, "name":"custom1", "rel":"ANIMAL,SOUND,2,1,false;"}.
 {"lv": 11, "name":"custom2", "rel":"ANIMAL,SOUND,55,82,false;"}.
+{"lv": 12, "name":"custom3", "rel":"VEHICLE,SOUND,2,1,false;"}.
+{"lv": 13, "name":"CUSTOM LEVEL PROVA", "rel":"PERSON,SOUND,3,3,false;"}.
