@@ -143,7 +143,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         for(Alert alert : alertList){
             if(alert.isEngaged()) {
                 engaged = true;
-                alertMessage += alert.getMessage();
+                alertMessage += alert.getMessage()+"\n";
             }
         }
         alertMessageTextView.setText(alertMessage);
