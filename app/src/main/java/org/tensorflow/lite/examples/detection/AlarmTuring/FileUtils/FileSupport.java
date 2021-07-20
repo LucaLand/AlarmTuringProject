@@ -12,7 +12,10 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.Se
 import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
@@ -28,7 +31,7 @@ public class FileSupport {
                 throw new FileNotFoundException("File:" + fileName + " not found!");
             return r;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             throw new FileNotFoundException("File:" + fileName + " not found!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -116,6 +119,32 @@ public class FileSupport {
         }
 
         return categoryFilters;
+    }
+
+    public static String loadChatId (String fileName) {
+
+        try (BufferedReader r = openFile(fileName)) {
+            String chatId = r.readLine();
+            return chatId;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    public static void saveChatId (String fileName, String chatId) {
+        try {
+            FileWriter myWriter = new FileWriter(fileName);
+            myWriter.write(chatId);
+            myWriter.close();
+            Logger.write("Successfully wrote to the file.");
+        } catch (IOException e) {
+            Logger.writeDebug("An error occurred.");
+            e.printStackTrace();
+        }
     }
 
 }

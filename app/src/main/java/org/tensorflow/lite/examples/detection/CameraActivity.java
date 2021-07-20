@@ -82,7 +82,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
   protected TextView cropValueTextView, inferenceTimeTextView;
   protected ImageView bottomSheetArrowImageView;
-  private SwitchCompat apiSwitchCompat;
 
 
   @Override
@@ -102,8 +101,6 @@ public abstract class CameraActivity extends AppCompatActivity
       requestPermission();
     }
 
-
-    apiSwitchCompat = findViewById(R.id.api_info_switch);
     bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
     gestureLayout = findViewById(R.id.gesture_layout);
     sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
@@ -158,8 +155,6 @@ public abstract class CameraActivity extends AppCompatActivity
 
     cropValueTextView = findViewById(R.id.crop_info);
     inferenceTimeTextView = findViewById(R.id.inference_info);
-
-    apiSwitchCompat.setOnCheckedChangeListener(this);
   }
 
   protected int[] getRgbBytes() {
@@ -479,13 +474,6 @@ public abstract class CameraActivity extends AppCompatActivity
       default:
         return 0;
     }
-  }
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    setUseNNAPI(isChecked);
-    if (isChecked) apiSwitchCompat.setText("NNAPI");
-    else apiSwitchCompat.setText("TFLITE");
   }
 
 

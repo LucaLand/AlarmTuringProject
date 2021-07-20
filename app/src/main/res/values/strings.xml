@@ -2,7 +2,7 @@
 
     <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
 
-    <string name="tfe_od_app_name" translation_description="Alarm Turing demo app [CHAR_LIMIT=40]">AlarmTuring-V5</string>
+    <string name="tfe_od_app_name" translation_description="Alarm Turing demo app [CHAR_LIMIT=40]">AlarmTuring-V6</string>
     <string name="play_alarm_sound">Play alarm sound</string>
     <string name="ALARM_label">ALARM!</string>
     <string name="AlarmMsgExample">2 Person | time: 5s | alertType: Sound</string>

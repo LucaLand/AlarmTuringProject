@@ -8,8 +8,12 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -25,6 +30,8 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilterFactory;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
+import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.FileSupport;
+import org.tensorflow.lite.examples.detection.AlarmTuring.TelegramBotUtils.TelegramBot;
 import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
@@ -62,10 +69,20 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private TextView TextViewLevelNum, levelNameTextView, alarmtextView, alertMessageTextView, enabledtextView;
     private FloatingActionButton onOffButton, resetButton;
     private ProgressBar detectionLevelProgressBar;
-    private LinearLayout relationInfoBox;
+    private LinearLayout relationInfoBox, botChatIDLinearLayout;
+    private SwitchCompat telegramBotSwitch;
+    private EditText chatIDEditText;
+    private Button chatIDConfirmButton;
 
     //SOUNDS
     private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
+
+    //BOT
+    private TelegramBot bot = new TelegramBot();
+    private String chatId = "";
+    boolean telegramBotActive = false;
+    private StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    private final String chatIdFileName = "chatIdSave.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,20 +108,45 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         detectionLevelProgressBar = findViewById(R.id.detectionLevelProgerssBar);
         enabledtextView = findViewById(R.id.enabledDistabledtextView);
         relationInfoBox = (LinearLayout) findViewById(R.id.relationBox);
+        botChatIDLinearLayout = (LinearLayout) findViewById(R.id.botChatID_linearLayout);
+        telegramBotSwitch = findViewById(R.id.telegram_bot_switch);
+        chatIDEditText = findViewById(R.id.editTextChatID);
+        chatIDConfirmButton = findViewById(R.id.chatIDButton);
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
         onOffButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
+        chatIDConfirmButton.setOnClickListener(this);
+        telegramBotSwitch.setOnCheckedChangeListener(this);
+
+        /*chatIDEditText.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {setBotChatID(s.toString());}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });*/
 
         //NOTIFY
         createNotificationChannel();
+
+
+        //BOT PROVE
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8)
+        {
+            StrictMode.setThreadPolicy(policy);
+        }
+        //bot.sendToTelegram(chatId, "AlarmTuringApp Started!");
+
+
 
         //INITIALIZATION
         secLevel= STARTING_SECURITY_LEVEL;
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
+        chatId = FileSupport.loadChatId(chatIdFileName);
+        chatIDEditText.setText(chatId);
     }
 
     /**
@@ -182,6 +224,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             case R.id.buttonReset:
                 handleResetButton();
                 break;
+            case R.id.chatIDButton:
+                setBotChatID(chatIDEditText.getText().toString());
         }
     }
 
@@ -194,6 +238,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         alarmtextView.setVisibility(View.INVISIBLE);
         detectionLevelProgressBar.setProgress(0);
         detectionLevelProgressBar.incrementProgressBy(-detectionLevelProgressBar.getProgress());
+        sendBotMessages("Alarm Reset!");
     }
 
     private void handleClickPlusButton(){
@@ -219,9 +264,13 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         TextViewLevelNum.setText(String.valueOf(secLevel));
         //Initialize Max level of the progress bar to te minimum level to Alert
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
+
         //Diplay Level info in bottom sheet layout
         this.displayLevelInfo();
         Logger.write("SECURITY LEVEL SET TO: " + level);
+
+        //BOT MESSAGES - LEVEL CHANGED
+        sendBotMessages("SecurityLevel set to: " + level +"-"+securityLevelList.get(level).getNomeLivello()+".");
     }
 
     private void handleOnOffButton(){
@@ -229,12 +278,18 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         if(securityController.isActivated()){
             enabledtextView.setText("ENABLED");
             enabledtextView.setTextColor(Color.GREEN);
+            //BOT MESSAGES
+            sendBotMessages("Alarm Enabled!");
             if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
         }else{
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
+            //BOT MESSAGES
+            sendBotMessages("Alarm Disabled!");
         }
         Logger.write("ENABLED/DISABLED!");
+
+
     }
 
     public static Context getContext() {
@@ -282,6 +337,29 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         }
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(isChecked) {
+            telegramBotActive = true;
+            botChatIDLinearLayout.setVisibility(View.VISIBLE);
+            telegramBotSwitch.setText("ON");
+        }else{
+            telegramBotActive = false;
+            botChatIDLinearLayout.setVisibility(View.GONE);
+            telegramBotSwitch.setText("OFF");
+        }
+    }
 
+    private void setBotChatID(String id){
+        if(id!=null || !id.equals(""))
+        chatId = id;
+        sendBotMessages("AlarmTuringApp Started!");
+        FileSupport.saveChatId(chatIdFileName, chatId);
+    }
+
+    private void sendBotMessages(String msg){
+        if(telegramBotActive)
+            bot.sendToTelegram(chatId, msg);
+    }
 
 }
