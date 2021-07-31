@@ -1,5 +1,7 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils;
 
+import android.os.Environment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.CategoryFilter;
@@ -13,6 +15,7 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -22,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class FileSupport {
+
+    public static final String dirName = "alarmturing";
 
     public static BufferedReader openFile(String fileName) throws FileNotFoundException {
         try{
@@ -70,30 +75,6 @@ public class FileSupport {
         return levelList;
     }
 
-    /* UNUSED FUNCTION (not util)
-    public static List<RelationCategoryToAlert> readRelations(String fileName) throws FileNotFoundException {
-        List<RelationCategoryToAlert> relationList = new LinkedList<>();
-        String line;
-        JSONObject json;
-        RelationCategoryToAlert rel;
-
-        BufferedReader r = openFile(fileName);
-        try {
-            while ((line = r.readLine()) != null){
-                json = new JSONObject(line);
-                rel = RelationFactory.createRelation(json);
-                relationList.add(rel);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return relationList;
-    }
-     */
-
     /**FILE Category:
      * {"category":"ANIMAL", "classes":"dog,cat,horse,bear,bird,cow;"}.
      * {"category":"PERSON", "classes":"person"}.
@@ -121,9 +102,10 @@ public class FileSupport {
         return categoryFilters;
     }
 
-    public static String loadChatId (String fileName) {
+    public static String loadStringFromFile (String fileName) {
+        final File file = loadFileFromStorage(dirName, fileName);
 
-        try (BufferedReader r = openFile(fileName)) {
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String chatId = r.readLine();
             return chatId;
         } catch (FileNotFoundException e) {
@@ -135,16 +117,23 @@ public class FileSupport {
         return "";
     }
 
-    public static void saveChatId (String fileName, String chatId) {
+    public static void saveStringOnFile (String fileName, String str) {
+        final File file = loadFileFromStorage(dirName, fileName);
         try {
-            FileWriter myWriter = new FileWriter(fileName);
-            myWriter.write(chatId);
+            FileWriter myWriter = new FileWriter(file);
+            myWriter.write(str);
             myWriter.close();
             Logger.write("Successfully wrote to the file.");
         } catch (IOException e) {
             Logger.writeDebug("An error occurred.");
             e.printStackTrace();
         }
+    }
+
+    public static File loadFileFromStorage (String directoryName, String fileName){
+        final String root = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + directoryName;
+        final File myDir = new File(root);
+        return new File(myDir, fileName);
     }
 
 }

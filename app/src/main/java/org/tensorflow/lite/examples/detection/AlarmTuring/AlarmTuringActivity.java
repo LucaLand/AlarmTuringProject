@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
@@ -31,14 +33,17 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.Categor
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.ConfidenceFilter;
 import org.tensorflow.lite.examples.detection.AlarmTuring.DetectionUtils.DetectionsFilterer;
 import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.FileSupport;
+import org.tensorflow.lite.examples.detection.AlarmTuring.MailSupport.GMailSender;
 import org.tensorflow.lite.examples.detection.AlarmTuring.TelegramBotUtils.TelegramBot;
 import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.RelationCategoryToAlert;
 import org.tensorflow.lite.examples.detection.AlarmTuring.SecurityLevelsUtils.SecurityLevel;
 import org.tensorflow.lite.examples.detection.DetectorActivity;
 import org.tensorflow.lite.examples.detection.R;
+import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
+import java.io.File;
 import java.util.List;
 
 //TODO. Bug fixes: read the bugtofix.txt file in the root dir
@@ -57,6 +62,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private static Context context;
 
     private List<SecurityLevel> securityLevelList;
+    private List<CategoryFilter> categoryFilterList;
 
     //VARIABLES
     private int secLevel;
@@ -73,24 +79,38 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private SwitchCompat telegramBotSwitch;
     private EditText chatIDEditText;
     private Button chatIDConfirmButton;
+    private EditText mailRecipientsEditText;
+    private Button mailRecipientsConfirmButton;
 
     //SOUNDS
     private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
 
     //BOT
-    private TelegramBot bot = new TelegramBot();
+    private final String botToken = "1931529186:AAGRQxg16hpAZ6LqGrwHjv8HNNntCMnSar0";
+    private final TelegramBot bot = new TelegramBot(botToken);
     private String chatId = "";
     boolean telegramBotActive = false;
     private StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
     private final String chatIdFileName = "chatIdSave.txt";
+
+    private int botTime = 0;
+    private final int FRAMES_FOR_BOT_SEND = 1500;
+
+    //MAIL
+    public static String mailRecipients = "";
+    private final String mailFileName = "mailSave.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Saving Context
         AlarmTuringActivity.context = getApplicationContext();
+
         //Loading all security levels
         securityLevelList = SecurityControllerFactory.getSecurityLevelList();
+
+        //Initializing filters for the category to detect
+        categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
 
         //SOUNDS
         enabledSoundPlayer = MediaPlayer.create(AlarmTuringActivity.getContext(), R.raw.enabled_sound);
@@ -112,6 +132,9 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         telegramBotSwitch = findViewById(R.id.telegram_bot_switch);
         chatIDEditText = findViewById(R.id.editTextChatID);
         chatIDConfirmButton = findViewById(R.id.chatIDButton);
+        mailRecipientsEditText = findViewById(R.id.email_edit_text);
+        mailRecipientsConfirmButton = findViewById(R.id.mailRecipientsButton);
+
 
         //Adding onClickListener
         plusImageView.setOnClickListener(this);
@@ -120,16 +143,11 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         resetButton.setOnClickListener(this);
         chatIDConfirmButton.setOnClickListener(this);
         telegramBotSwitch.setOnCheckedChangeListener(this);
+        mailRecipientsConfirmButton.setOnClickListener(this);
 
-        /*chatIDEditText.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {setBotChatID(s.toString());}
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });*/
 
         //NOTIFY
         createNotificationChannel();
-
 
         //BOT PROVE
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
@@ -145,8 +163,11 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         secLevel= STARTING_SECURITY_LEVEL;
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
-        chatId = FileSupport.loadChatId(chatIdFileName);
+        chatId = FileSupport.loadStringFromFile(chatIdFileName);
         chatIDEditText.setText(chatId);
+        mailRecipientsEditText.setText(FileSupport.loadStringFromFile(mailFileName));
+        setMailRecipients();
+
     }
 
     /**
@@ -155,8 +176,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
     protected List<Detector.Recognition> alarmTuringMainFunc(List<Detector.Recognition> detections){
-        /** Initializing filters for the category to detect*/
-        List<CategoryFilter> categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
 
         /**Filtering all the detection by allowed Category and minimum confidence */
         ConfidenceFilter confFilter = new ConfidenceFilter(MINIMUM_CONFIDENCE_TF_OD_API);
@@ -172,6 +191,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     protected void processImage() {
         super.processImage();
         checkAlerts();
+        botAlerts();
         updateLevelProgressBarr();
     }
 
@@ -190,6 +210,21 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         }
         alertMessageTextView.setText(alertMessage);
         alarmBlink();
+    }
+    //BOT
+    private void botAlerts(){
+        if(engaged && telegramBotActive){
+            if(botTime == 0) {
+                sendBotDetectionPhoto();
+                String alertMessage = alertMessageTextView.getText().toString();
+                sendBotMessages("---- ALERT! DETECTION ----");
+                sendBotMessages(alertMessage);
+            }
+            botTime++;
+            if(botTime >= FRAMES_FOR_BOT_SEND){
+                botTime = 0;
+            }
+        }
     }
 
     private void alarmBlink(){
@@ -226,6 +261,12 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
                 break;
             case R.id.chatIDButton:
                 setBotChatID(chatIDEditText.getText().toString());
+                break;
+            case R.id.mailRecipientsButton:
+                setMailRecipients();
+                makeToastMessage("Email Recipients Confirmed!", Toast.LENGTH_SHORT);
+                break;
+
         }
     }
 
@@ -233,6 +274,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         if(!simpleBeapSoundPlayer.isPlaying())simpleBeapSoundPlayer.start();
         securityController.resetAlerts();
         securityController.setActivated(true);
+        categoryFilterList = CategoryFilterFactory.initializeRecognitionFilters();
         handleOnOffButton();
         engaged = false;
         alarmtextView.setVisibility(View.INVISIBLE);
@@ -278,9 +320,11 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         if(securityController.isActivated()){
             enabledtextView.setText("ENABLED");
             enabledtextView.setTextColor(Color.GREEN);
+            if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
             //BOT MESSAGES
             sendBotMessages("Alarm Enabled!");
-            if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
+            //TEST EMAIL
+            invioMail();
         }else{
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
@@ -344,17 +388,24 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             botChatIDLinearLayout.setVisibility(View.VISIBLE);
             telegramBotSwitch.setText("ON");
         }else{
+            sendBotMessages("AlarmTuringBot Deactivated!");
             telegramBotActive = false;
             botChatIDLinearLayout.setVisibility(View.GONE);
             telegramBotSwitch.setText("OFF");
         }
+        botTime = 0;
     }
 
     private void setBotChatID(String id){
-        if(id!=null || !id.equals(""))
-        chatId = id;
-        sendBotMessages("AlarmTuringApp Started!");
-        FileSupport.saveChatId(chatIdFileName, chatId);
+        if(id!=null || !id.equals("")) {
+            chatId = id;
+            sendBotMessages("AlarmTuringApp Connected!");
+            FileSupport.saveStringOnFile(chatIdFileName, chatId);
+            botTime = 0;
+            makeToastMessage("ChatID Confirmed!", Toast.LENGTH_SHORT);
+            //TEST SEND PHOTO
+            //sendBotDetectionPhoto();
+        }
     }
 
     private void sendBotMessages(String msg){
@@ -362,4 +413,37 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             bot.sendToTelegram(chatId, msg);
     }
 
+    private void sendBotDetectionPhoto(){
+        String fileName = "detectionPhoto.png";
+        saveDetectionPhoto(fileName);
+        bot.sendPhoto(chatId, FileSupport.loadFileFromStorage(FileSupport.dirName, fileName));
+    }
+
+    public void saveDetectionPhoto(String fileName){
+        ImageUtils.saveBitmap(croppedBitmap, fileName);
+    }
+
+    //TEST MAIL
+    private void invioMail() {
+        try {
+            GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "Fisciano66!");
+            sender.sendMail("ALARM ALERT!",
+                    "ALERT :: " + alertMessageTextView.getText().toString(),
+                    "ALARM-TURING",
+                    "luca.tiger@virgilio.it");
+            Logger.write("EMAIL SENDED!");
+        } catch (Exception e) {
+            Logger.writeDebug("SendMail"+ e.getMessage());
+        }
+    }
+
+    private void setMailRecipients(){
+        mailRecipients = mailRecipientsEditText.getText().toString();
+        FileSupport.saveStringOnFile(mailFileName, mailRecipients);
+    }
+
+    private void makeToastMessage(CharSequence msg, int duration){
+        Toast toast = Toast.makeText(context, msg, duration);
+        toast.show();
+    }
 }
