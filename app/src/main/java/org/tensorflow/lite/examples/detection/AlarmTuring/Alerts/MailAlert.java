@@ -3,6 +3,7 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.Alerts;
 
 import android.widget.EditText;
 
+import org.tensorflow.lite.examples.detection.AlarmTuring.AlarmTuringActivity;
 import org.tensorflow.lite.examples.detection.AlarmTuring.MailSupport.GMailSender;
 import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 
@@ -25,7 +26,7 @@ public class MailAlert extends GeneralAlert {
             sender.sendMail("ALARM ALERT!",
                     "ALERT :: " + getMessage(),
                     "ALARM-TURING",
-                    "luca.tiger@virgilio.it");
+                    AlarmTuringActivity.mailRecipients);
             Logger.write("EMAIL SENDED!");
         } catch (Exception e) {
             Logger.writeDebug("SendMail"+ e.getMessage());

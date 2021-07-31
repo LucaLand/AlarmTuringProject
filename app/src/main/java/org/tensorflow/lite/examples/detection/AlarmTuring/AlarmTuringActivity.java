@@ -261,9 +261,10 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
                 break;
             case R.id.chatIDButton:
                 setBotChatID(chatIDEditText.getText().toString());
+                makeToastMessage("ChatID Confirmed!", Toast.LENGTH_SHORT);
                 break;
             case R.id.mailRecipientsButton:
-                setMailRecipients();
+                confirmEmail();
                 makeToastMessage("Email Recipients Confirmed!", Toast.LENGTH_SHORT);
                 break;
 
@@ -323,8 +324,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
             //BOT MESSAGES
             sendBotMessages("Alarm Enabled!");
-            //TEST EMAIL
-            invioMail();
         }else{
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
@@ -402,7 +401,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             sendBotMessages("AlarmTuringApp Connected!");
             FileSupport.saveStringOnFile(chatIdFileName, chatId);
             botTime = 0;
-            makeToastMessage("ChatID Confirmed!", Toast.LENGTH_SHORT);
             //TEST SEND PHOTO
             //sendBotDetectionPhoto();
         }
@@ -424,14 +422,15 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     //TEST MAIL
-    private void invioMail() {
+    private void confirmEmail() {
+        setMailRecipients();
         try {
             GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "Fisciano66!");
-            sender.sendMail("ALARM ALERT!",
-                    "ALERT :: " + alertMessageTextView.getText().toString(),
+            sender.sendMail("AlarmTuringApp",
+                    "Email successfully connected to Alarm-Turing!",
                     "ALARM-TURING",
-                    "luca.tiger@virgilio.it");
-            Logger.write("EMAIL SENDED!");
+                    mailRecipients);
+            Logger.write("EMAIL SENT!");
         } catch (Exception e) {
             Logger.writeDebug("SendMail"+ e.getMessage());
         }
