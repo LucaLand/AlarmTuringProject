@@ -83,7 +83,7 @@ public class SecurityController {
         }
 
         if(!alert.isEngaged())
-        alert.setAlertMessage(writeAlertMessage(rel, num)); //rel.toString() + "num:" + num
+            alert.setAlertMessage(writeAlertMessage(rel, num)); //rel.toString() + "num:" + num
 
         if(checkDetectionLevelRelation(numRel, alertTime)) {
                 alert.alert();

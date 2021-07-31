@@ -18,6 +18,9 @@ package org.tensorflow.lite.examples.detection.env;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Environment;
+
+import org.tensorflow.lite.examples.detection.AlarmTuring.FileUtils.FileSupport;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -62,7 +65,7 @@ public class ImageUtils {
    */
   public static void saveBitmap(final Bitmap bitmap, final String filename) {
     final String root =
-        Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "tensorflow";
+        Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + FileSupport.dirName;
     LOGGER.i("Saving %dx%d bitmap to %s.", bitmap.getWidth(), bitmap.getHeight(), root);
     final File myDir = new File(root);
 

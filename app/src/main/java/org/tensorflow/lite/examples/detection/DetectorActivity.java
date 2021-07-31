@@ -77,7 +77,7 @@ public abstract class DetectorActivity extends CameraActivity implements OnImage
 
   private long lastProcessingTimeMs;
   private Bitmap rgbFrameBitmap = null;
-  private Bitmap croppedBitmap = null;
+  protected Bitmap croppedBitmap = null;
   private Bitmap cropCopyBitmap = null;
 
   private boolean computingDetection = false;
