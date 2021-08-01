@@ -9,21 +9,18 @@ import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
 
 public class MailAlert extends GeneralAlert {
 
-
-    /** IMPLEMENTING CLASS */
-
     @Override
     public void alert() {
-        if(!isEngaged())
+        if(!isEngaged()) {
             setEngaged(true);
-        invioMail();
-        Logger.write("MAIL!\n" + getMessage());
+            invioMail();
+            Logger.write("MAIL!\n" + getMessage());
+        }
     }
 
     private void invioMail() {
         try {
-            GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "Fisciano66!");
-            sender.sendMail("ALARM ALERT!",
+            AlarmTuringActivity.sender.sendMail("ALARM ALERT!",
                     "ALERT :: " + getMessage(),
                     "ALARM-TURING",
                     AlarmTuringActivity.mailRecipients);

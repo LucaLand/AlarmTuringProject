@@ -1,5 +1,6 @@
 package org.tensorflow.lite.examples.detection.AlarmTuring.TelegramBotUtils;
 
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 
 import java.io.BufferedInputStream;
@@ -15,6 +16,7 @@ public class TelegramBot extends com.pengrad.telegrambot.TelegramBot {
         super(botToken);
     }
 
+    /*
     public void sendToTelegram(String chatID, String msg) {
         String urlString = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s";
         String botToken = "1931529186:AAGRQxg16hpAZ6LqGrwHjv8HNNntCMnSar0";
@@ -27,6 +29,12 @@ public class TelegramBot extends com.pengrad.telegrambot.TelegramBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+     */
+
+    public void sendToTelegram(String chatID, String msg){
+        SendMessage sendMessage = new SendMessage(chatID, msg);
+        execute(sendMessage);
     }
 
     public void sendPhoto(String chatID, File image){

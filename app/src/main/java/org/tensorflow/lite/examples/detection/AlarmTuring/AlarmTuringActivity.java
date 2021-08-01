@@ -86,7 +86,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
 
     //BOT
-    private final String botToken = "1931529186:AAGRQxg16hpAZ6LqGrwHjv8HNNntCMnSar0";
+    private final String botToken = "Token";
     private final TelegramBot bot = new TelegramBot(botToken);
     private String chatId = "";
     boolean telegramBotActive = false;
@@ -97,6 +97,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private final int FRAMES_FOR_BOT_SEND = 1500;
 
     //MAIL
+    public static GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "{Password}");
     public static String mailRecipients = "";
     private final String mailFileName = "mailSave.txt";
 
@@ -255,9 +256,13 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
                 break;
             case R.id.buttonOnOffAlarm:
                 handleOnOffButton();
+                //BOT MESSAGES
+                    if(securityController.isActivated()) sendBotMessages("Alarm Enabled!");
+                    else sendBotMessages("Alarm Disabled!");
                 break;
             case R.id.buttonReset:
                 handleResetButton();
+                sendBotMessages("Alarm Reset!");
                 break;
             case R.id.chatIDButton:
                 setBotChatID(chatIDEditText.getText().toString());
@@ -281,7 +286,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         alarmtextView.setVisibility(View.INVISIBLE);
         detectionLevelProgressBar.setProgress(0);
         detectionLevelProgressBar.incrementProgressBy(-detectionLevelProgressBar.getProgress());
-        sendBotMessages("Alarm Reset!");
     }
 
     private void handleClickPlusButton(){
@@ -299,6 +303,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void setSecurityLevel(int level){
+        handleResetButton();
         securityController = SecurityControllerFactory.createSecurityController(level, true);
         handleOnOffButton();
         // Set name info of the level in the bottom layout panel
@@ -322,17 +327,11 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             enabledtextView.setText("ENABLED");
             enabledtextView.setTextColor(Color.GREEN);
             if(!enabledSoundPlayer.isPlaying()) enabledSoundPlayer.start();
-            //BOT MESSAGES
-            sendBotMessages("Alarm Enabled!");
         }else{
             enabledtextView.setText("DISABLED");
             enabledtextView.setTextColor(Color.RED);
-            //BOT MESSAGES
-            sendBotMessages("Alarm Disabled!");
         }
         Logger.write("ENABLED/DISABLED!");
-
-
     }
 
     public static Context getContext() {
@@ -425,7 +424,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private void confirmEmail() {
         setMailRecipients();
         try {
-            GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "Fisciano66!");
             sender.sendMail("AlarmTuringApp",
                     "Email successfully connected to Alarm-Turing!",
                     "ALARM-TURING",
