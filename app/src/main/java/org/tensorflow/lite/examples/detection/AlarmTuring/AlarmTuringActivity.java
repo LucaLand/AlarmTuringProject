@@ -286,6 +286,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         alarmtextView.setVisibility(View.INVISIBLE);
         detectionLevelProgressBar.setProgress(0);
         detectionLevelProgressBar.incrementProgressBy(-detectionLevelProgressBar.getProgress());
+        botTime = 0;
     }
 
     private void handleClickPlusButton(){

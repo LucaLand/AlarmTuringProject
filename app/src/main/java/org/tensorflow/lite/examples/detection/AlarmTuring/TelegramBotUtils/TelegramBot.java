@@ -3,6 +3,8 @@ package org.tensorflow.lite.examples.detection.AlarmTuring.TelegramBotUtils;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 
+import org.tensorflow.lite.examples.detection.AlarmTuring.Utils.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +37,12 @@ public class TelegramBot extends com.pengrad.telegrambot.TelegramBot {
     public void sendToTelegram(String chatID, String msg){
         SendMessage sendMessage = new SendMessage(chatID, msg);
         execute(sendMessage);
+        Logger.write("TELEGRAM BOT - Msg Sent!");
     }
 
     public void sendPhoto(String chatID, File image){
         SendPhoto sendPhoto = new SendPhoto(chatID, image);
         execute(sendPhoto);
+        Logger.write("TELEGRAM BOT - Photo Sent!");
     }
 }
