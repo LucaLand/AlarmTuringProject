@@ -162,6 +162,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
         //INITIALIZATION
         secLevel= STARTING_SECURITY_LEVEL;
+        securityController = SecurityControllerFactory.createSecurityController(secLevel, false);
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
         chatId = FileSupport.loadStringFromFile(chatIdFileName);
@@ -257,8 +258,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
             case R.id.buttonOnOffAlarm:
                 handleOnOffButton();
                 //BOT MESSAGES
-                    if(securityController.isActivated()) sendBotMessages("Alarm Enabled!");
-                    else sendBotMessages("Alarm Disabled!");
+                if(securityController.isActivated()) sendBotMessages("Alarm Enabled!");
+                else sendBotMessages("Alarm Disabled!");
                 break;
             case R.id.buttonReset:
                 handleResetButton();
@@ -272,7 +273,6 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
                 confirmEmail();
                 makeToastMessage("Email Recipients Confirmed!", Toast.LENGTH_SHORT);
                 break;
-
         }
     }
 
