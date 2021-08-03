@@ -44,6 +44,7 @@ import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 //TODO. Bug fixes: read the bugtofix.txt file in the root dir
@@ -86,8 +87,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private MediaPlayer enabledSoundPlayer, simpleBeapSoundPlayer;
 
     //BOT
-    private final String botToken = "Token";
-    private final TelegramBot bot = new TelegramBot(botToken);
+    private String botToken;
+    private TelegramBot bot;
     private String chatId = "";
     boolean telegramBotActive = false;
     private StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -97,7 +98,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     private final int FRAMES_FOR_BOT_SEND = 1500;
 
     //MAIL
-    public static GMailSender sender = new GMailSender("nicolacipolla69@gmail.com", "{Password}");
+    public static GMailSender sender;
     public static String mailRecipients = "";
     private final String mailFileName = "mailSave.txt";
 
@@ -165,11 +166,16 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
         securityController = SecurityControllerFactory.createSecurityController(secLevel, false);
         setSecurityLevel(secLevel);
         detectionLevelProgressBar.setMax(securityController.getMaxTimeAlert());
+        //Token and Mail sender configuration initialization from file
+        HashMap<String, String> map = FileSupport.loadConfigurationPswFile("psw.txt");
+        botToken = map.get("token");
+        bot = new TelegramBot(botToken);
+        sender = new GMailSender(map.get("mail"), map.get("mailPsw"));
+        //
         chatId = FileSupport.loadStringFromFile(chatIdFileName);
         chatIDEditText.setText(chatId);
         mailRecipientsEditText.setText(FileSupport.loadStringFromFile(mailFileName));
         setMailRecipients();
-
     }
 
     /**

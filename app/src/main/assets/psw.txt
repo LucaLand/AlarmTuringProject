@@ -1,0 +1,5 @@
+{Token}
+{E-mail ex.mple@gmail.com}
+{E-mail password}
+
+!! IMPORTANT CONFIGURATION FILE (Bot and Mail)!!

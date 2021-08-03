@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -98,7 +99,6 @@ public class FileSupport {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return categoryFilters;
     }
 
@@ -134,6 +134,30 @@ public class FileSupport {
         final String root = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + directoryName;
         final File myDir = new File(root);
         return new File(myDir, fileName);
+    }
+
+    public static HashMap<String,String> loadConfigurationPswFile (String fileName){
+        HashMap<String, String> map = new HashMap<>();
+        try {
+            BufferedReader r = openFile(fileName);
+            String s;
+            s = r.readLine();
+            map.put("token", s);
+            s= r.readLine();
+            map.put("mail", s);
+            s = r.readLine();
+            map.put("mailPsw", s);
+            //Test the map creation
+            //Logger.writeDebug(map.toString());
+
+        } catch (FileNotFoundException e) {
+            Logger.writeDebug("FileNotFoundException for file: " + fileName);
+            //e.printStackTrace();
+        } catch (IOException e) {
+            Logger.writeDebug("IOExcpetion for file: " + fileName);
+            //e.printStackTrace();
+        }
+        return map;
     }
 
 }
