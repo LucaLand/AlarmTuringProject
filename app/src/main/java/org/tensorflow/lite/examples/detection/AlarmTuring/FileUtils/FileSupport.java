@@ -109,11 +109,12 @@ public class FileSupport {
             String chatId = r.readLine();
             return chatId;
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Logger.writeDebug("FileNotFoundException: " + fileName);
+            //e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.writeDebug("IOException: " + fileName);
+            //e.printStackTrace();
         }
-
         return "";
     }
 
@@ -125,8 +126,8 @@ public class FileSupport {
             myWriter.close();
             Logger.write("Successfully wrote to the file.");
         } catch (IOException e) {
-            Logger.writeDebug("An error occurred.");
-            e.printStackTrace();
+            Logger.writeDebug("An error occurred Writing on file: " + fileName);
+            //e.printStackTrace();
         }
     }
 

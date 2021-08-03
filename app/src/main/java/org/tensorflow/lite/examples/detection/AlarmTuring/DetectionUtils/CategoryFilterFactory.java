@@ -63,7 +63,7 @@ public class CategoryFilterFactory {
         try {
             categoryFilterList = FileSupport.readCategoryFilters(fileName);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             throw new FileNotFoundException("File:" + fileName + " not found");
         }
 

@@ -402,7 +402,7 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
     }
 
     private void setBotChatID(String id){
-        if(id!=null || !id.equals("")) {
+        if(id!=null && !id.equals("")) {
             chatId = id;
             sendBotMessages("AlarmTuringApp Connected!");
             FileSupport.saveStringOnFile(chatIdFileName, chatId);
@@ -443,7 +443,8 @@ public class AlarmTuringActivity extends DetectorActivity implements View.OnClic
 
     private void setMailRecipients(){
         mailRecipients = mailRecipientsEditText.getText().toString();
-        FileSupport.saveStringOnFile(mailFileName, mailRecipients);
+        if(mailRecipients!=null && !mailRecipients.equals(""))
+            FileSupport.saveStringOnFile(mailFileName, mailRecipients);
     }
 
     private void makeToastMessage(CharSequence msg, int duration){
